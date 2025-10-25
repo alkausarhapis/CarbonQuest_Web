@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CarbonQuest Dashboard</title>
+     <link rel="icon" type="image/png" href="../page_Syarif/Assets/Logo.png" />
+    <link rel="stylesheet" href="../components/menu_dashboard.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <a href="../page_hapis/index.html" class="sidebar-item active" data-page="dashboard">
+        <img src="../components/grid.png" alt="dashboard" width="30px">
+        <span class="sidebar-text">Dashboard</span>
+      </a>
+
+      <a href="../page_bintang/index.html" class="sidebar-item" data-page="article">
+        <img src="../components/file-text.png" alt="dashboard" width="30px">
+        <span class="sidebar-text">Article</span>
+    </a>
+    
+    <a href="../page_albert/mission.html" class="sidebar-item" data-page="mission">
+        <img src="../components/Rocket.png" alt="dashboard" width="30px">
+        <span class="sidebar-text">Mission</span>
+      </a>
+
+      <div class="logout-item">Logout</div>
+    </div>
+    <!-- End sidebar -->
+
+    <div class="main-content">
+      <div class="header">
+        <h1 class="page-title" id="pageTitle">Dashboard</h1>
+        <div class="search-box">
+          <input
+            type="text"
+            placeholder="Search by Text or ID"
+            class="search-input"
+          />
+          <button class="search-btn">🔍</button>
+        </div>
+      </div>
+
+      <div class="page-content" id="dashboardPage">
+        <div class="stats-container">
+          <div class="stat-card">
+            <div class="stat-icon">📄</div>
+            <div class="stat-info">
+              <div class="stat-number">240</div>
+              <div class="stat-label">Published Article</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">🕐</div>
+            <div class="stat-info">
+              <div class="stat-number">16</div>
+              <div class="stat-label">Draft Article</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">✏️</div>
+            <div class="stat-info">
+              <div class="stat-number">57</div>
+              <div class="stat-label">Published Mission</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">🕐</div>
+            <div class="stat-info">
+              <div class="stat-number">10</div>
+              <div class="stat-label">Draft Mission</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">
+            <h2>Table Article</h2>
+            <div class="date-filters">
+              <div class="date-input-group">
+                <label>Start Date</label>
+                <input type="date" value="2024-01-01" />
+              </div>
+              <div class="date-input-group">
+                <label>End Date</label>
+                <input type="date" value="2024-01-30" />
+              </div>
+              <button class="btn-get">Get Article</button>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th>Time Stamp</th>
+                  <th>Provided By</th>
+                  <th>Edited By</th>
+                  <th>Desk</th>
+                </tr>
+              </thead>
+              <tbody id="articleTableBody">
+                <tr>
+                  <td>1998498</td>
+                  <td>Inovasi Teknologi: Kunci Tekan Emisi Karbon Global</td>
+                  <td>12-Jan-2024 | 08:53 am</td>
+                  <td>Shagun Bhardwaj</td>
+                  <td>Shagun Bhardwaj</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td>1998499</td>
+                  <td>
+                    Kebijakan Baru: Pemerintah Serius Pangkas Emisi Karbon
+                  </td>
+                  <td>13-Jan-2024 | 09:33 am</td>
+                  <td>Shagun Bhardwaj</td>
+                  <td>Shagun Bhardwaj</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td>1998500</td>
+                  <td>Sektor Industri Bergerak: Komitmen Menuju Nol Emisi</td>
+                  <td>14-Jan-2024 | 08:30 am</td>
+                  <td>Shagun Bhardwaj</td>
+                  <td>Shagun Bhardwaj</td>
+                  <td>-</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">
+            <h2>Table Mission</h2>
+            <div class="date-filters">
+              <div class="date-input-group">
+                <label>Start Date</label>
+                <input type="date" value="2024-01-01" />
+              </div>
+              <div class="date-input-group">
+                <label>End Date</label>
+                <input type="date" value="2024-01-30" />
+              </div>
+              <button class="btn-get">Get Mission</button>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th>Time Stamp</th>
+                </tr>
+              </thead>
+              <tbody id="missionTableBody">
+                <tr>
+                  <td>1</td>
+                  <td>Menuju Nol Emisi.</td>
+                  <td>12-Jan-2024 | 08:53 am</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Wujudkan Udara Bersih.</td>
+                  <td>13-Jan-2024 | 09:33 am</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Sediakan Energi Hijau.</td>
+                  <td>14-Jan-2024 | 08:30 am</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

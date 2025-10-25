@@ -1,0 +1,148 @@
+/* Reset & Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
+  color: #343a40;
+}
+
+/* Main Content */
+.main-content {
+  margin-left: 100px;
+  padding: 2rem;
+}
+
+/* Header */
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+.header-title {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.tombol {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s ease-in-out;
+}
+
+.tombol-submit {
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+.tombol-submit:hover {
+  background-color: #0b5ed7;
+}
+
+.outline-tombol {
+  background-color: transparent;
+  border-color: #ced4da;
+  color: #6c757d;
+}
+
+.outline-tombol:hover {
+  background-color: #f8f9fa;
+}
+
+/* Form Elemen */
+
+.input-wrapper, .leftBottomForm, .rightBottomForm {
+  margin-bottom: 1rem;
+}
+
+.input-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.text-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  transition: border-color 0.15s ease-in-out;
+}
+
+.input-label.wajib::after {
+  content: " *";
+  color: #dc3545;
+  font-weight: 600;
+}
+
+/* Bottom Form */
+.bottomForm {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Image Box */
+.image-box {
+  border: 1px dashed #ced4da;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  background: #f8f9fa;
+}
+
+.image-box-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.tombol-delete {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+.tombol-delete:hover {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.tombol-delete:disabled {
+  cursor: not-allowed;
+}
+
+.dropdown {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  background-color: #fff;
+  font-size: 1rem;
+  appearance: none;
+}
+
+/* Hidden Elements */
+.hidden {
+  display: none;
+}
+
+/* responsive design */
+@media (max-width: 992px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
