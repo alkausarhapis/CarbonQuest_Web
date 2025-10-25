@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Menu Article | Dashboard</title>
+
+    <!-- Bootstrap CSS (CDN) -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --sidebar-w: 220px;
+        --sidebar-bg: #141414;
+        --sidebar-text: #d0d0d0;
+      }
+      body {
+        background: #0f0f10;
+      }
+      .layout {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: var(--sidebar-w) 1fr;
+      }
+      .sidebar {
+        background: var(--sidebar-bg);
+        color: var(--sidebar-text);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 1rem 0.75rem;
+      }
+      .sidebar .nav-link {
+        color: var(--sidebar-text);
+        border-radius: 0.5rem;
+      }
+      .sidebar .nav-link.active,
+      .sidebar .nav-link:hover {
+        background: #1f1f1f;
+        color: #fff;
+      }
+      .content {
+        background: #1b1b1c;
+        padding: 1.25rem;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .panel {
+        background: #fff;
+        border-radius: 0.75rem;
+        padding: 1rem 1rem 1.25rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .panel-body {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+      }
+      .panel-body::-webkit-scrollbar {
+        width: 6px;
+      }
+      .panel-body::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+      }
+      .panel-body::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 3px;
+      }
+      .panel-body::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+      .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #e9ecef;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      .form-label.required::after {
+        content: " *";
+        color: #dc3545;
+        font-weight: 600;
+      }
+      .image-box {
+        border: 1px dashed #ced4da;
+        border-radius: 0.75rem;
+        padding: 1rem;
+        background: #fafafa;
+      }
+      .toast-stack {
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        z-index: 1080;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="layout">
+      <aside class="sidebar">
+        <div>
+          <div class="px-2 mb-3">
+            <div class="text-white fw-semibold">Dashboard</div>
+            <nav class="nav flex-column gap-1">
+              <a href="#" class="nav-link">HomeMain menu</a>
+              <a href="#" class="nav-link active">Article</a>
+              <a href="#" class="nav-link">Mission</a>
+            </nav>
+          </div>
+        </div>
+        <div class="px-2">
+          <button
+            type="button"
+            id="logoutBtn"
+            class="btn btn-outline-light w-100"
+          >
+            Logout
+          </button>
+        </div>
+      </aside>
+
+      <main class="content">
+        <div class="panel">
+          <div class="panel-header">
+            <h6 class="mb-0">New Article</h6>
+            <div class="d-flex gap-2">
+              <button
+                id="saveDraftBtn"
+                class="btn btn-outline-secondary btn-sm"
+              >
+                Save as Draft
+              </button>
+              <button id="submitBtn" class="btn btn-primary btn-sm">
+                Submit
+              </button>
+            </div>
+          </div>
+          <!-- Bagian form -->
+          <div class="panel-body">
+            <form id="articleForm" novalidate>
+              <div class="row g-3">
+                <label for="titleInput" class="form-label required"
+                  >Article Title</label
+                >
+                <input
+                  type="text"
+                  id="titleInput"
+                  class="form-control"
+                  placeholder="Ketik title disini"
+                />
+                <div class="invalid-feedback">Title is required.</div>
+                <div class="col-12">
+                  <label for="tagsInput" class="form-label required"
+                    >Isi Topic</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="tagsInput"
+                    placeholder="e.g., climate, mobility"
+                  />
+                  <div class="invalid-feedback">Title is required.</div>
+                </div>
+                <div class="col-12">
+                  <label for="descInput" class="form-label">Description</label>
+                  <textarea
+                    class="form-control"
+                    id="descInput"
+                    rows="8"
+                    placeholder="Masukan deskripsi article"
+                    required
+                  ></textarea>
+                </div>
+              </div>
+              <div class="row g-4 mt-1">
+                <!-- Ambil gambar -->
+                <div class="col-lg-6">
+                  <label class="form-label">Cover image</label>
+                  <div class="image-box">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                      <button
+                        id="browseBtn"
+                        type="button"
+                        class="btn btn-outline-primary btn-sm"
+                      >
+                        Cari
+                      </button>
+                      <button
+                        id="clearImageBtn"
+                        type="button"
+                        class="btn btn-outline-danger btn-sm"
+                      >
+                        Hapus
+                      </button>
+                      <div class="small text-muted" id="imageNote">
+                        No image selected
+                      </div>
+                      <div
+                        class="badge text-bg-light d-none"
+                        id="selectedFile"
+                      ></div>
+                      <input
+                        type="file"
+                        id="fileInput"
+                        accept="image/*"
+                        hidden
+                      />
+                    </div>
+                  </div>
+                </div>
+                <!-- Kolom kanan -->
+                <div class="col-lg-6">
+                  <div class="row g-3">
+                    <div class="col-12">
+                      <label for="photoCaptionInput" class="form-label"
+                        >Photo Caption</label
+                      >
+                      <input
+                        type="text"
+                        id="photoCaptionInput"
+                        class="form-control"
+                        placeholder="Short caption"
+                      />
+                      <div class="col-12">
+                        <label for="photoCreditInput" class="form-label"
+                          >Photo Credit</label
+                        >
+                        <input
+                          id="photoCreditInput"
+                          type="text"
+                          class="form-control"
+                          placeholder="Photographer or source"
+                        />
+                      </div>
+                      <div class="col-12">
+                        <label for="authorSelect" class="form-label"
+                          >Author</label
+                        >
+                        <select id="authorSelect" class="form-select">
+                          <option value="">Select author</option>
+                          <option>Admin</option>
+                          <option>Editor</option>
+                          <option>Contributor</option>
+                        </select>
+                      </div>
+                      <div class="col-12">
+                        <label for="placeSelect" class="form-label"
+                          >Place</label
+                        >
+                        <select id="placeSelect" class="form-select">
+                          <option value="">Select place</option>
+                          <option>Bandung</option>
+                          <option>Jakarta</option>
+                          <option>Surabaya</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <label for="highlightsInput" class="form-label"
+                  >Highlights</label
+                >
+                <textarea
+                  id="highlightsInput"
+                  class="form-control"
+                  rows="6"
+                  placeholder="Key points or bullets..."
+                ></textarea>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+    <div
+      class="toast-stack"
+      id="toastStack"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
+    <!-- Bootstrap JS (bundle) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- App JS -->
+    <script src="script.js"></script>
+  </body>
+</html>
