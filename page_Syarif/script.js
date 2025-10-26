@@ -1,11 +1,3 @@
-const logoutBtn = document.querySelector(".logout-item");
-logoutBtn.addEventListener("click", function () {
-  const confirmLogout = confirm("Kamu yakin ingin logout?");
-  if (confirmLogout) {
-    window.location.href = "../page_Syarif/index.html";
-  }
-});
-
 document.addEventListener("DOMContentLoaded", function () {
   const navbarHeight = 75; // Tinggi Navbar tetap (sesuai padding-top di CSS)
 

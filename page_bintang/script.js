@@ -6,7 +6,6 @@ logoutBtn.addEventListener("click", function () {
   }
 });
 
-// Ambil elemen DOM
 const browseBtn = document.getElementById("browseBtn");
 const clearImageBtn = document.getElementById("clearImageBtn");
 const fileInput = document.getElementById("fileInput");
