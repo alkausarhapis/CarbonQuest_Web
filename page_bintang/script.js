@@ -1,9 +1,16 @@
+const logoutBtn = document.querySelector(".logout-item");
+logoutBtn.addEventListener("click", function () {
+  const confirmLogout = confirm("Kamu yakin ingin logout?");
+  if (confirmLogout) {
+    window.location.href = "../page_Syarif/index.html";
+  }
+});
+
 // Ambil elemen DOM
 const browseBtn = document.getElementById("browseBtn");
 const clearImageBtn = document.getElementById("clearImageBtn");
 const fileInput = document.getElementById("fileInput");
 const imageNote = document.getElementById("imageNote");
-const logoutBtn = document.querySelector(".logout-item");
 
 function resetImageUI() {
   imageNote.textContent = "No image selected";
@@ -26,13 +33,6 @@ function cariGambar() {
   clearImageBtn.addEventListener("click", () => {
     fileInput.value = "";
     resetImageUI();
-  });
-}
-
-function logout() {
-  logoutBtn.addEventListener("click", () => {
-    const yes = confirm("Apakah Anda ingin logout?");
-    if (yes) window.location.href = "./login.html";
   });
 }
 

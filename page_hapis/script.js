@@ -2,7 +2,7 @@ const logoutBtn = document.querySelector(".logout-item");
 logoutBtn.addEventListener("click", function () {
   const confirmLogout = confirm("Kamu yakin ingin logout?");
   if (confirmLogout) {
-    window.location.href = "login.html";
+    window.location.href = "../page_Syarif/index.html";
   }
 });
 
