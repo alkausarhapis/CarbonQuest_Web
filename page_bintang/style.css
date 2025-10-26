@@ -36,20 +36,11 @@ body {
 }
 
 /* Form Elements */
-.input-wrapper {
-  margin-bottom: 1rem;
-}
-
 .input-label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
-}
-
-.input-label.wajib::after {
-  content: " *";
-  color: #dc3545;
-  font-weight: 600;
+  margin-top: 1rem;
 }
 
 .text-input {
@@ -127,10 +118,6 @@ textarea.text-input {
   align-items: center;
   gap: 1rem;
   margin-bottom: 0.5rem;
-}
-
-.panel-header .image-box-controls {
-  margin-bottom: 0;
 }
 
 /* Styling Dropdown */

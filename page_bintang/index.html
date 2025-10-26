@@ -47,43 +47,36 @@
           <button id="submitBtn" class="tombol tombol-submit">Submit</button>
         </div>
       </div>
+
       <form id="articleForm" novalidate>
-        <div class="input-wrapper">
-          <label for="titleInput" class="input-label wajib"
-            >Article Title</label
-          >
-          <input
-            type="text"
-            id="titleInput"
-            class="text-input"
-            placeholder="Ketik title disini"
-          />
-        </div>
+        <label for="titleInput" class="input-label">Article Title</label>
+        <input
+          type="text"
+          id="titleInput"
+          class="text-input"
+          placeholder="Ketik title disini"
+        />
 
-        <div class="input-wrapper">
-          <label for="tagsInput" class="input-label wajib">Isi Topic</label>
-          <input
-            type="text"
-            class="text-input"
-            id="tagsInput"
-            placeholder="e.g., climate, mobility"
-          />
-        </div>
+        <label for="tagsInput" class="input-label">Isi Topic</label>
+        <input
+          type="text"
+          class="text-input"
+          id="tagsInput"
+          placeholder="e.g., climate, mobility"
+        />
 
-        <div class="input-wrapper">
-          <label for="descInput" class="input-label">Description</label>
-          <textarea
-            class="text-input"
-            id="descInput"
-            rows="8"
-            placeholder="Masukan deskripsi article"
-            required
-          ></textarea>
-        </div>
+        <label for="descInput" class="input-label">Description</label>
+        <textarea
+          class="text-input"
+          id="descInput"
+          rows="8"
+          placeholder="Masukan deskripsi article"
+          required
+        ></textarea>
 
         <div class="grid grid-2">
           <!-- Image Upload Section -->
-          <div class="input-wrapper">
+          <div>
             <label class="input-label">Cover image</label>
             <div class="image-box">
               <div class="image-box-controls">
@@ -112,68 +105,56 @@
               </div>
             </div>
 
-            <div class="input-wrapper">
-              <label for="highlightsInput" class="input-label"
-                >Highlights</label
-              >
-              <textarea
-                id="highlightsInput"
-                class="text-input"
-                rows="9"
-                placeholder="Key points or bullets..."
-              ></textarea>
-            </div>
+            <label for="highlightsInput" class="input-label">Highlights</label>
+            <textarea
+              id="highlightsInput"
+              class="text-input"
+              rows="9"
+              placeholder="Key points or bullets..."
+            ></textarea>
           </div>
 
           <!-- Image Details Section -->
-          <div class="input-wrapper">
-            <div class="input-wrapper">
-              <label for="photoCaptionInput" class="input-label"
-                >Photo Caption</label
-              >
-              <input
-                type="text"
-                id="photoCaptionInput"
-                class="text-input"
-                placeholder="Short caption"
-              />
-            </div>
+          <div>
+            <label for="photoCaptionInput" class="input-label"
+              >Photo Caption</label
+            >
+            <input
+              type="text"
+              id="photoCaptionInput"
+              class="text-input"
+              placeholder="Short caption"
+            />
 
-            <div class="input-wrapper">
-              <label for="photoCreditInput" class="input-label"
-                >Photo Credit</label
-              >
-              <input
-                id="photoCreditInput"
-                type="text"
-                class="text-input"
-                placeholder="Photographer or source"
-              />
-            </div>
+            <label for="photoCreditInput" class="input-label"
+              >Photo Credit</label
+            >
+            <input
+              id="photoCreditInput"
+              type="text"
+              class="text-input"
+              placeholder="Photographer or source"
+            />
 
-            <div class="input-wrapper">
-              <label for="authorSelect" class="input-label">Author</label>
-              <select id="authorSelect" class="dropdown">
-                <option value="">Select author</option>
-                <option>Admin</option>
-                <option>Editor</option>
-                <option>Contributor</option>
-              </select>
-            </div>
+            <label for="authorSelect" class="input-label">Author</label>
+            <select id="authorSelect" class="dropdown">
+              <option value="">Select author</option>
+              <option>Admin</option>
+              <option>Editor</option>
+              <option>Contributor</option>
+            </select>
 
-            <div class="input-wrapper">
-              <label for="placeSelect" class="input-label">Place</label>
-              <select id="placeSelect" class="dropdown">
-                <option value="">Select place</option>
-                <option>Bandung</option>
-                <option>Jakarta</option>
-                <option>Surabaya</option>
-              </select>
-            </div>
+            <label for="placeSelect" class="input-label">Place</label>
+            <select id="placeSelect" class="dropdown">
+              <option value="">Select place</option>
+              <option>Bandung</option>
+              <option>Jakarta</option>
+              <option>Surabaya</option>
+            </select>
           </div>
         </div>
       </form>
     </main>
-    <script src="script.js"></script>
+    <script src="../page_bintang/script.js"></script>
   </body>
 </html>
