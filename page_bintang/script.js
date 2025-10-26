@@ -11,11 +11,6 @@ function resetImageUI() {
 }
 
 function cariGambar() {
-  if (!browseBtn || !fileInput || !clearImageBtn || !imageNote) {
-    console.error("Elemen image picker tidak lengkap.");
-    return;
-  }
-
   browseBtn.addEventListener("click", () => fileInput.click());
 
   fileInput.addEventListener("change", () => {
