@@ -45,7 +45,7 @@ function resetImageUI() {
   clearImageBtn.disabled = true;
 }
 
-// Init image picker (fungsi kosong dulu, diisi step selanjutnya)
+//image picker
 function initImagePicker() {
   if (
     !browseBtn ||
@@ -90,7 +90,7 @@ function getFormData() {
     author: authorSelect.value,
     place: placeSelect.value,
     highlights: highlightsInput.value.trim(),
-    imageName: fileInput.files[0]?.name || "", // catatan: berkas tidak akan bisa di-restore otomatis
+    imageName: fileInput.files[0]?.name || "",
   };
 }
 
@@ -106,7 +106,7 @@ function setFormData(data) {
   resetImageUI();
 }
 
-// Draft helpers (kosong dulu)
+// Draft helpers
 function saveDraft() {
   const data = getFormData();
   localStorage.setItem("draftArticle", JSON.stringify(data));
@@ -122,7 +122,7 @@ function loadDraft() {
   }
 }
 
-// Validasi & Submit (kosong dulu)
+// Validasi & Submit
 function validateForm() {
   let valid = true;
 
@@ -151,7 +151,7 @@ function handleSubmit() {
   const dataKirim = getFormData();
   console.log("Mengirim data artikel:", dataKirim);
 
-  // Demo: anggap sukses, kosongkan draft dan reset form
+  // Demo: anggap sukses
   localStorage.removeItem("draftArticle");
   form.reset();
   resetImageUI();
