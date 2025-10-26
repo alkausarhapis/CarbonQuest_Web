@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Menu Article | Dashboard</title>
+    <link rel="stylesheet" href="../components/menu_dashboard.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <a
+        href="../page_hapis/index.html"
+        class="sidebar-item"
+        data-page="dashboard"
+      >
+        <img src="../components/grid.png" alt="dashboard" width="30px" />
+        <span class="sidebar-text">Dashboard</span>
+      </a>
+
+      <a
+        href="../page_bintang/index.html"
+        class="sidebar-item active"
+        data-page="article"
+      >
+        <img src="../components/file-text.png" alt="dashboard" width="30px" />
+        <span class="sidebar-text">Article</span>
+      </a>
+
+      <a href="#" class="sidebar-item" data-page="mission">
+        <img src="../components/Rocket.png" alt="dashboard" width="30px" />
+        <span class="sidebar-text">Mission</span>
+      </a>
+
+      <div class="logout-item">Logout</div>
+    </div>
+    <!-- End sidebar -->
+
+    <main class="main-content">
+      <div class="panel-header">
+        <h1 class="panel-title">New Article</h1>
+        <div class="image-box-controls">
+          <button id="saveDraftBtn" class="tombol outline-tombol">
+            Save as Draft
+          </button>
+          <button id="submitBtn" class="tombol tombol-submit">Submit</button>
+        </div>
+      </div>
+      <form id="articleForm" novalidate>
+        <div class="input-wrapper">
+          <label for="titleInput" class="input-label wajib"
+            >Article Title</label
+          >
+          <input
+            type="text"
+            id="titleInput"
+            class="text-input"
+            placeholder="Ketik title disini"
+          />
+        </div>
+
+        <div class="input-wrapper">
+          <label for="tagsInput" class="input-label wajib">Isi Topic</label>
+          <input
+            type="text"
+            class="text-input"
+            id="tagsInput"
+            placeholder="e.g., climate, mobility"
+          />
+        </div>
+
+        <div class="input-wrapper">
+          <label for="descInput" class="input-label">Description</label>
+          <textarea
+            class="text-input"
+            id="descInput"
+            rows="8"
+            placeholder="Masukan deskripsi article"
+            required
+          ></textarea>
+        </div>
+
+        <div class="grid grid-2">
+          <!-- Image Upload Section -->
+          <div class="input-wrapper">
+            <label class="input-label">Cover image</label>
+            <div class="image-box">
+              <div class="image-box-controls">
+                <button
+                  id="browseBtn"
+                  type="button"
+                  class="tombol outline-tombol"
+                >
+                  Cari
+                </button>
+                <button
+                  id="clearImageBtn"
+                  type="button"
+                  class="tombol tombol-delete"
+                >
+                  Hapus
+                </button>
+                <div id="imageNote">No image selected</div>
+                <div class="hidden" id="selectedFile"></div>
+                <input
+                  type="file"
+                  id="fileInput"
+                  accept="image/*"
+                  class="hidden"
+                />
+              </div>
+            </div>
+
+            <div class="input-wrapper">
+              <label for="highlightsInput" class="input-label"
+                >Highlights</label
+              >
+              <textarea
+                id="highlightsInput"
+                class="text-input"
+                rows="9"
+                placeholder="Key points or bullets..."
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Image Details Section -->
+          <div class="input-wrapper">
+            <div class="input-wrapper">
+              <label for="photoCaptionInput" class="input-label"
+                >Photo Caption</label
+              >
+              <input
+                type="text"
+                id="photoCaptionInput"
+                class="text-input"
+                placeholder="Short caption"
+              />
+            </div>
+
+            <div class="input-wrapper">
+              <label for="photoCreditInput" class="input-label"
+                >Photo Credit</label
+              >
+              <input
+                id="photoCreditInput"
+                type="text"
+                class="text-input"
+                placeholder="Photographer or source"
+              />
+            </div>
+
+            <div class="input-wrapper">
+              <label for="authorSelect" class="input-label">Author</label>
+              <select id="authorSelect" class="dropdown">
+                <option value="">Select author</option>
+                <option>Admin</option>
+                <option>Editor</option>
+                <option>Contributor</option>
+              </select>
+            </div>
+
+            <div class="input-wrapper">
+              <label for="placeSelect" class="input-label">Place</label>
+              <select id="placeSelect" class="dropdown">
+                <option value="">Select place</option>
+                <option>Bandung</option>
+                <option>Jakarta</option>
+                <option>Surabaya</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </form>
+    </main>
+    <script src="script.js"></script>
+  </body>
+</html>
