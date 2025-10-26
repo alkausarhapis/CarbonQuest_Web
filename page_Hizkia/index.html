@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>CarbonQuest — Login</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div class="split">
+		<aside class="left">
+			<img src="../components/logo.png" alt="CarbonQuest logo" class="logo">
+		</aside>
+		<main class="right">
+			<div class="login-wrap">
+				<div class="login-card">
+					<h2 class="title">Login to your account</h2>
+					<p class="subtitle">Welcome back!👋</p>
+
+					<form id="loginForm" novalidate>
+						<label for="email">Email</label>
+						<input id="email" name="email" type="email" placeholder="Please enter your email" required>
+
+						<label for="password">Password</label>
+						<div class="password-row">
+							<input id="password" name="password" type="password" placeholder="Enter password" required>
+							<button type="button" id="togglePwd" class="pwd-toggle" aria-label="Toggle password visibility">👁️</button>
+						</div>
+
+						<div class="button-row">
+							<button type="submit" id="loginBtn" class="btn btn-dark">Login</button>
+						</div>
+
+						<div class="links">
+							<a href="#" id="forgot">Forget Password?</a>
+						</div>
+
+						<div class="or-sep">Or</div>
+						<div class="login-using">Login using</div>
+						<div class="social-row">
+							<button type="button" id="googleBtn" class="social google" aria-label="Login with Google">
+								<img src="../components/google.png" alt="Google" class="google-icon">
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</main>
+	</div>
+	<script src="script.js"></script>
+</body>
+</html>

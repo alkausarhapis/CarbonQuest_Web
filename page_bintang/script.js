@@ -32,7 +32,7 @@ function cariGambar() {
 function logout() {
   logoutBtn.addEventListener("click", () => {
     const yes = confirm("Apakah Anda ingin logout?");
-    if (yes) window.location.href = "./login.html";
+    if (yes) window.location.href = "../page_Hizkia/index.html";
   });
 }
 
