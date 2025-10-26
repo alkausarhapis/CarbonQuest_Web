@@ -3,7 +3,7 @@ const browseBtn = document.getElementById("browseBtn");
 const clearImageBtn = document.getElementById("clearImageBtn");
 const fileInput = document.getElementById("fileInput");
 const imageNote = document.getElementById("imageNote");
-const logoutBtn = document.getElementById("logoutBtn");
+const logoutBtn = document.querySelector(".logout-item");
 
 function resetImageUI() {
   imageNote.textContent = "No image selected";
