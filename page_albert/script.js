@@ -1,16 +1,15 @@
 (function () {
   "use strict";
 
-  const form = document.getElementById("articleForm");
+  const form = document.getElementById("missionForm");
   const titleInput = document.getElementById("titleInput");
   const tagsInput = document.getElementById("tagsInput");
   const descInput = document.getElementById("descInput");
   const highlightsInput = document.getElementById("highlightsInput");
   const photoCaptionInput = document.getElementById("photoCaptionInput");
-  const photoCreditInput = document.getElementById("photoCreditInput");
   const authorInput = document.getElementById("authorInput");
   const authorRoleSelect = document.getElementById("authorRoleSelect");
-  const placeInput = document.getElementById("placeInput");
+  const missionPointsInput = document.getElementById("missionPointsInput");
 
   const submitBtn = document.getElementById("submitBtn");
 
@@ -56,7 +55,12 @@
     const errors = [];
 
     if (!titleInput.value.trim()) {
-      errors.push("Article title is required");
+      errors.push("Mission title is required");
+      isValid = false;
+    }
+
+    if (!tagsInput.value.trim()) {
+      errors.push("Mission tag is required");
       isValid = false;
     }
 
@@ -75,16 +79,15 @@
   function getFormData(isDraft = false) {
     return {
       id: generateId(),
-      type: "article",
+      type: "mission",
       title: titleInput.value.trim(),
       tags: tagsInput.value.trim(),
       description: descInput.value.trim(),
       highlights: highlightsInput.value.trim(),
       photoCaption: photoCaptionInput.value.trim(),
-      photoCredit: photoCreditInput.value.trim(),
       author: authorInput.value.trim(),
       authorRole: authorRoleSelect.value,
-      place: placeInput.value.trim(),
+      missionPoints: missionPointsInput.value.trim(),
       image: selectedImage ? selectedImage.data : null,
       imageName: selectedImage ? selectedImage.name : null,
       status: isDraft ? "draft" : "pending",
@@ -94,11 +97,11 @@
 
   function generateId() {
     return (
-      "article_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9)
+      "mission_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9)
     );
   }
 
-  function saveArticle(data) {
+  function saveMission(data) {
     const STORAGE_KEY = "editorial_items_v2";
     let items = [];
 
@@ -116,8 +119,8 @@
       title: data.title,
       author: data.author || "Unknown",
       authorRole: data.authorRole,
+      missionPoints: data.missionPoints,
       description: data.description,
-      place: data.place,
       image: data.image,
       imageName: data.imageName,
       stage: data.status === "draft" ? "pending" : "pending",
@@ -135,9 +138,9 @@
     }
 
     const data = getFormData(false);
-    saveArticle(data);
+    saveMission(data);
 
-    alert("Article submitted successfully!");
+    alert("Mission submitted successfully!");
     window.location.href = "../page_hapis/index.html";
   });
 
