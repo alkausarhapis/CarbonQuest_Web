@@ -3,187 +3,226 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CarbonQuest Dashboard</title>
-     <link rel="icon" type="image/png" href="../page_Syarif/Assets/Logo.png" />
+    <title>Editorial Dashboard — Articles & Missions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="../components/menu_dashboard.css" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <a href="../page_hapis/index.html" class="sidebar-item active" data-page="dashboard">
-        <img src="../components/grid.png" alt="dashboard" width="30px">
-        <span class="sidebar-text">Dashboard</span>
-      </a>
-
-      <a href="../page_bintang/index.html" class="sidebar-item" data-page="article">
-        <img src="../components/file-text.png" alt="dashboard" width="30px">
-        <span class="sidebar-text">Article</span>
-    </a>
-    
-    <a href="../page_albert/mission.html" class="sidebar-item" data-page="mission">
-        <img src="../components/Rocket.png" alt="dashboard" width="30px">
-        <span class="sidebar-text">Mission</span>
-      </a>
-
-      <div class="logout-item">Logout</div>
-    </div>
-    <!-- End sidebar -->
-
-    <div class="main-content">
-      <div class="header">
-        <h1 class="page-title" id="pageTitle">Dashboard</h1>
-        <div class="search-box">
-          <input
-            type="text"
-            placeholder="Search by Text or ID"
-            class="search-input"
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="logo">★</span>
+        <span class="brand-name">CarbonQuest</span>
+      </div>
+      <nav class="menu">
+        <a href="index.html" class="menu-item is-active" data-view="dashboard">
+          <img src="../components/menu.png" alt="Dashboard" class="menu-icon" />
+          <span>Dashboard</span>
+        </a>
+        <a
+          href="../page_bintang/index.html"
+          class="menu-item"
+          data-view="article"
+        >
+          <img
+            src="../components/artikel.png"
+            alt="Artikel"
+            class="menu-icon"
           />
-          <button class="search-btn">🔍</button>
+          <span>Buat Artikel</span>
+        </a>
+        <a
+          href="../page_albert/index.html"
+          class="menu-item"
+          data-view="mission"
+        >
+          <img src="../components/misi.png" alt="Misi" class="menu-icon" />
+          <span>Buat Misi</span>
+        </a>
+      </nav>
+
+      <button class="logout-btn" id="logoutBtn">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"
+          />
+        </svg>
+        <span>Logout</span>
+      </button>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="hello">
+          <div class="muted">Welcome,</div>
+          <div class="name">Admin</div>
         </div>
+        <div class="searchbar">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M10 4a6 6 0 104.472 10.06l4.234 4.234 1.414-1.414-4.234-4.234A6 6 0 0010 4zm0 2a4 4 0 110 8 4 4 0 010-8z"
+            />
+          </svg>
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Search by title, author, or tags..."
+          />
+        </div>
+      </header>
+
+      <section class="toolbar">
+        <div class="segmented">
+          <button class="seg-btn is-active" data-filter="all">All</button>
+          <button class="seg-btn" data-filter="article">Articles</button>
+          <button class="seg-btn" data-filter="mission">Missions</button>
+        </div>
+      </section>
+
+      <section class="content-list" id="contentList">
+        <!-- Items will be rendered here -->
+      </section>
+    </main>
+
+    <!-- Create / Edit Modal -->
+    <div class="modal" id="modal">
+      <div class="modal-overlay" id="modalOverlay"></div>
+      <div class="modal-card">
+        <header class="modal-head">
+          <h3 id="modalTitle">Create Item</h3>
+          <button class="icon-btn" id="closeModal" aria-label="Close">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M18 6L6 18M6 6l12 12"
+                stroke-width="2"
+                stroke="currentColor"
+                fill="none"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+        </header>
+        <form id="itemForm" class="form">
+          <input type="hidden" id="itemId" />
+          <input type="hidden" id="type" />
+          <label class="field">
+            <span class="label">Title</span>
+            <input
+              id="title"
+              type="text"
+              placeholder="Enter title..."
+              required
+            />
+          </label>
+          <label class="field">
+            <span class="label">Author</span>
+            <input id="author" type="text" placeholder="Author name" required />
+          </label>
+          <label class="field">
+            <span class="label">Author Role</span>
+            <select id="authorRole">
+              <option value="">Select role</option>
+              <option value="Admin">Admin</option>
+              <option value="Contributor">Contributor</option>
+            </select>
+          </label>
+          <label class="field" id="missionPointsField" style="display: none">
+            <span class="label">Mission Points</span>
+            <input
+              id="missionPoints"
+              type="number"
+              placeholder="Enter points"
+              min="0"
+            />
+          </label>
+          <label class="field">
+            <span class="label">Description</span>
+            <textarea
+              id="description"
+              rows="4"
+              placeholder="Enter description..."
+            ></textarea>
+          </label>
+          <label class="field" id="topicField">
+            <span class="label">Topic</span>
+            <input id="topic" type="text" placeholder="Enter topic/tags..." />
+          </label>
+          <label class="field" id="placeField" style="display: none">
+            <span class="label">Place</span>
+            <input id="place" type="text" placeholder="Enter location..." />
+          </label>
+          <div class="field">
+            <span class="label">Cover Image</span>
+            <div class="image-controls">
+              <button
+                type="button"
+                class="ghost browse-btn"
+                id="browseImageBtn"
+              >
+                Browse Image
+              </button>
+              <button
+                type="button"
+                class="ghost clear-img-btn"
+                id="clearImageBtn"
+              >
+                Clear
+              </button>
+            </div>
+            <div id="imageFileName" class="image-filename-display">
+              No image selected
+            </div>
+            <input
+              type="file"
+              id="imageUpload"
+              accept="image/*"
+              class="hidden-input"
+            />
+          </div>
+          <div class="actions">
+            <button type="button" class="ghost" id="cancelBtn">Cancel</button>
+            <button type="submit" class="primary" id="saveBtn">Save</button>
+          </div>
+        </form>
       </div>
+    </div>
 
-      <div class="page-content" id="dashboardPage">
-        <div class="stats-container">
-          <div class="stat-card">
-            <div class="stat-icon">📄</div>
-            <div class="stat-info">
-              <div class="stat-number">240</div>
-              <div class="stat-label">Published Article</div>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-icon">🕐</div>
-            <div class="stat-info">
-              <div class="stat-number">16</div>
-              <div class="stat-label">Draft Article</div>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-icon">✏️</div>
-            <div class="stat-info">
-              <div class="stat-number">57</div>
-              <div class="stat-label">Published Mission</div>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-icon">🕐</div>
-            <div class="stat-info">
-              <div class="stat-number">10</div>
-              <div class="stat-label">Draft Mission</div>
-            </div>
-          </div>
+    <template id="cardTemplate">
+      <article class="card">
+        <div class="card-top">
+          <span class="pill tag"></span>
+          <span class="muted ai-check">AI checked</span>
         </div>
-
-        <div class="section">
-          <div class="section-header">
-            <h2>Table Article</h2>
-            <div class="date-filters">
-              <div class="date-input-group">
-                <label>Start Date</label>
-                <input type="date" value="2024-01-01" />
-              </div>
-              <div class="date-input-group">
-                <label>End Date</label>
-                <input type="date" value="2024-01-30" />
-              </div>
-              <button class="btn-get">Get Article</button>
-            </div>
-          </div>
-
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Title</th>
-                  <th>Time Stamp</th>
-                  <th>Provided By</th>
-                  <th>Edited By</th>
-                  <th>Desk</th>
-                </tr>
-              </thead>
-              <tbody id="articleTableBody">
-                <tr>
-                  <td>1998498</td>
-                  <td>Inovasi Teknologi: Kunci Tekan Emisi Karbon Global</td>
-                  <td>12-Jan-2024 | 08:53 am</td>
-                  <td>Shagun Bhardwaj</td>
-                  <td>Shagun Bhardwaj</td>
-                  <td>-</td>
-                </tr>
-                <tr>
-                  <td>1998499</td>
-                  <td>
-                    Kebijakan Baru: Pemerintah Serius Pangkas Emisi Karbon
-                  </td>
-                  <td>13-Jan-2024 | 09:33 am</td>
-                  <td>Shagun Bhardwaj</td>
-                  <td>Shagun Bhardwaj</td>
-                  <td>-</td>
-                </tr>
-                <tr>
-                  <td>1998500</td>
-                  <td>Sektor Industri Bergerak: Komitmen Menuju Nol Emisi</td>
-                  <td>14-Jan-2024 | 08:30 am</td>
-                  <td>Shagun Bhardwaj</td>
-                  <td>Shagun Bhardwaj</td>
-                  <td>-</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        <div class="card-image-container">
+          <img class="card-image" src="" alt="Article image" />
         </div>
-
-        <div class="section">
-          <div class="section-header">
-            <h2>Table Mission</h2>
-            <div class="date-filters">
-              <div class="date-input-group">
-                <label>Start Date</label>
-                <input type="date" value="2024-01-01" />
-              </div>
-              <div class="date-input-group">
-                <label>End Date</label>
-                <input type="date" value="2024-01-30" />
-              </div>
-              <button class="btn-get">Get Mission</button>
-            </div>
-          </div>
-
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Title</th>
-                  <th>Time Stamp</th>
-                </tr>
-              </thead>
-              <tbody id="missionTableBody">
-                <tr>
-                  <td>1</td>
-                  <td>Menuju Nol Emisi.</td>
-                  <td>12-Jan-2024 | 08:53 am</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>Wujudkan Udara Bersih.</td>
-                  <td>13-Jan-2024 | 09:33 am</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>Sediakan Energi Hijau.</td>
-                  <td>14-Jan-2024 | 08:30 am</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        <h4 class="title"></h4>
+        <div class="meta">
+          <div class="author"></div>
+          <div class="time"></div>
         </div>
-      </div>
+        <div class="mission-points"></div>
+        <p class="description"></p>
+        <div class="card-actions">
+          <button class="icon-btn edit" title="Edit">
+            <img src="../page_hapis/assets/edit.png" alt="Edit" />
+          </button>
+          <button class="icon-btn delete" title="Delete">
+            <img src="../page_hapis/assets/trashbin.png" alt="Delete" />
+          </button>
+        </div>
+      </article>
+    </template>
 
     <script src="script.js"></script>
   </body>

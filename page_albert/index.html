@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>New Article - Editorial Dashboard</title>
+    <title>New Mission - Editorial Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -28,7 +28,11 @@
           <img src="../components/menu.png" alt="Dashboard" class="menu-icon" />
           <span>Dashboard</span>
         </a>
-        <a href="index.html" class="menu-item is-active" data-view="article">
+        <a
+          href="../page_bintang/index.html"
+          class="menu-item"
+          data-view="article"
+        >
           <img
             src="../components/artikel.png"
             alt="Artikel"
@@ -36,11 +40,7 @@
           />
           <span>Buat Artikel</span>
         </a>
-        <a
-          href="../page_albert/index.html"
-          class="menu-item"
-          data-view="mission"
-        >
+        <a href="index.html" class="menu-item is-active" data-view="mission">
           <img src="../components/misi.png" alt="Misi" class="menu-icon" />
           <span>Buat Misi</span>
         </a>
@@ -63,30 +63,34 @@
 
     <main class="main-content">
       <div class="panel-header">
-        <h1 class="panel-title">New Article</h1>
+        <h1 class="header-title">New Mission</h1>
         <div class="image-box-controls">
           <button id="submitBtn" class="tombol tombol-submit">Submit</button>
         </div>
       </div>
 
-      <form id="articleForm" novalidate>
+      <form id="missionForm">
         <div class="input-wrapper">
-          <label for="titleInput" class="input-label">Article Title</label>
+          <label for="titleInput" class="input-label wajib"
+            >Mission Title</label
+          >
           <input
             type="text"
             id="titleInput"
             class="text-input"
             placeholder="Ketik title disini"
+            required
           />
         </div>
 
         <div class="input-wrapper">
-          <label for="tagsInput" class="input-label">Isi Topic</label>
+          <label for="tagsInput" class="input-label wajib">Tag Misi</label>
           <input
             type="text"
             class="text-input"
             id="tagsInput"
-            placeholder="e.g., climate, mobility"
+            placeholder="e.g. education, sustainability"
+            required
           />
         </div>
 
@@ -96,40 +100,42 @@
             class="text-input"
             id="descInput"
             rows="5"
-            placeholder="Masukan deskripsi article"
+            placeholder="Masukan deskripsi mission"
             required
           ></textarea>
         </div>
 
-        <div class="grid grid-2">
-          <!-- Image Upload Section -->
-          <div>
-            <label class="input-label">Cover image</label>
-            <div class="image-box">
-              <div class="image-box-controls">
-                <button
-                  id="browseBtn"
-                  type="button"
-                  class="tombol outline-tombol"
-                >
-                  Cari
-                </button>
-                <button
-                  id="clearImageBtn"
-                  type="button"
-                  class="tombol tombol-delete"
-                >
-                  Hapus
-                </button>
+        <div class="bottomForm">
+          <div class="leftBottomForm">
+            <div class="input-wrapper">
+              <label class="input-label">Cover image</label>
+
+              <div class="image-box">
+                <div class="image-box-controls">
+                  <button
+                    id="browseBtn"
+                    type="button"
+                    class="tombol outline-tombol"
+                  >
+                    Cari
+                  </button>
+                  <button
+                    id="clearImageBtn"
+                    type="button"
+                    class="tombol tombol-delete"
+                  >
+                    Hapus
+                  </button>
+                </div>
+                <div id="imageNote">No image selected</div>
+                <div class="hidden" id="selectedFile"></div>
+                <input
+                  type="file"
+                  id="fileInput"
+                  accept="image/*"
+                  class="hidden"
+                />
               </div>
-              <div id="imageNote">No image selected</div>
-              <div class="hidden" id="selectedFile"></div>
-              <input
-                type="file"
-                id="fileInput"
-                accept="image/*"
-                class="hidden"
-              />
             </div>
 
             <div class="input-wrapper">
@@ -145,8 +151,7 @@
             </div>
           </div>
 
-          <!-- Image Details Section -->
-          <div>
+          <div class="rightBottomForm">
             <div class="input-wrapper">
               <label for="photoCaptionInput" class="input-label"
                 >Photo Caption</label
@@ -156,18 +161,6 @@
                 id="photoCaptionInput"
                 class="text-input"
                 placeholder="Short caption"
-              />
-            </div>
-
-            <div class="input-wrapper">
-              <label for="photoCreditInput" class="input-label"
-                >Photo Credit</label
-              >
-              <input
-                id="photoCreditInput"
-                type="text"
-                class="text-input"
-                placeholder="Photographer or source"
               />
             </div>
 
@@ -193,12 +186,15 @@
             </div>
 
             <div class="input-wrapper">
-              <label for="placeInput" class="input-label">Place</label>
+              <label for="missionPointsInput" class="input-label"
+                >Mission Points</label
+              >
               <input
-                type="text"
-                id="placeInput"
+                type="number"
+                id="missionPointsInput"
                 class="text-input"
-                placeholder="Enter location (e.g., Bandung, Jakarta)"
+                placeholder="Enter points (e.g., 100)"
+                min="0"
               />
             </div>
           </div>
