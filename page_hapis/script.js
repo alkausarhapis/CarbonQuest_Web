@@ -1,13 +1,164 @@
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
 const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 
-const contentList = $("#contentList");
-const template = $("#cardTemplate");
+const articleTableBody = $("#articleTableBody");
+const missionTableBody = $("#missionTableBody");
 
 const STORAGE_KEY = "editorial_items_v2";
 
 function seed() {
-  return [];
+  return [
+    {
+      id: uid(),
+      type: "article",
+      tag: "Climate Change",
+      title: "Inovasi Teknologi: Kunci Tekan Emisi Karbon Global",
+      author: "Shagun Bhardwaj",
+      authorRole: "Admin",
+      description:
+        "Teknologi terbaru membantu mengurangi emisi karbon secara signifikan di berbagai sektor industri.",
+      place: "Jakarta",
+      createdAt: new Date("2024-01-12T08:53:00").getTime(),
+      stage: "approved",
+      image: null,
+      imageName: null,
+    },
+    {
+      id: uid(),
+      type: "article",
+      tag: "Policy",
+      title: "Kebijakan Baru: Pemerintah Serius Pangkas Emisi Karbon",
+      author: "Shagun Bhardwaj",
+      authorRole: "Admin",
+      description:
+        "Pemerintah mengeluarkan kebijakan baru untuk mendukung pengurangan emisi karbon nasional.",
+      place: "Bandung",
+      createdAt: new Date("2024-01-13T09:33:00").getTime(),
+      stage: "review",
+      image: null,
+      imageName: null,
+    },
+    {
+      id: uid(),
+      type: "article",
+      tag: "Industry",
+      title: "Sektor Industri Bergerak: Komitmen Menuju Nol Emisi",
+      author: "Shagun Bhardwaj",
+      authorRole: "Contributor",
+      description:
+        "Berbagai perusahaan industri berkomitmen untuk mencapai target nol emisi pada tahun 2050.",
+      place: "Surabaya",
+      createdAt: new Date("2024-01-14T08:30:00").getTime(),
+      stage: "pending",
+      image: null,
+      imageName: null,
+    },
+    {
+      id: uid(),
+      type: "article",
+      tag: "Energy",
+      title: "Listrik Hijau: Solusi Terdepan Kurangi Jejak Karbon",
+      author: "John Doe",
+      authorRole: "Admin",
+      description:
+        "Energi terbarukan menjadi solusi utama dalam mengurangi jejak karbon di Indonesia.",
+      place: "Yogyakarta",
+      createdAt: new Date("2024-01-14T08:53:00").getTime(),
+      stage: "approved",
+      image: null,
+      imageName: null,
+    },
+    {
+      id: uid(),
+      type: "article",
+      tag: "Transportation",
+      title: "Transportasi Publik: Andalan Baru Reduksi Emisi Kota",
+      author: "Jane Smith",
+      authorRole: "Contributor",
+      description:
+        "Sistem transportasi publik yang efisien dapat mengurangi emisi karbon hingga 40% di kota besar.",
+      place: "Semarang",
+      createdAt: new Date("2024-01-14T09:53:00").getTime(),
+      stage: "review",
+      image: null,
+      imageName: null,
+    },
+    {
+      id: uid(),
+      type: "mission",
+      tag: "Climate Action",
+      title: "Menuju Nol Emisi",
+      author: "Admin Team",
+      authorRole: "Admin",
+      description:
+        "Misi untuk mencapai target nol emisi karbon melalui berbagai program dan kegiatan.",
+      missionPoints: "100",
+      createdAt: new Date("2024-01-12T08:53:00").getTime(),
+      stage: "approved",
+      image: null,
+      imageName: null,
+    },
+    {
+      id: uid(),
+      type: "mission",
+      tag: "Clean Air",
+      title: "Wujudkan Udara Bersih",
+      author: "Admin Team",
+      authorRole: "Admin",
+      description:
+        "Program penanaman pohon dan pengurangan polusi untuk udara yang lebih bersih.",
+      missionPoints: "75",
+      createdAt: new Date("2024-01-13T09:33:00").getTime(),
+      stage: "approved",
+      image: null,
+      imageName: null,
+    },
+    {
+      id: uid(),
+      type: "mission",
+      tag: "Green Energy",
+      title: "Sediakan Energi Hijau",
+      author: "Energy Team",
+      authorRole: "Contributor",
+      description:
+        "Misi untuk menyediakan energi terbarukan yang ramah lingkungan.",
+      missionPoints: "150",
+      createdAt: new Date("2024-01-14T08:30:00").getTime(),
+      stage: "review",
+      image: null,
+      imageName: null,
+    },
+    {
+      id: uid(),
+      type: "mission",
+      tag: "Transportation",
+      title: "Revolusi Transportasi Hijau",
+      author: "Transport Team",
+      authorRole: "Admin",
+      description:
+        "Transformasi sistem transportasi menuju lebih ramah lingkungan dan berkelanjutan.",
+      missionPoints: "120",
+      createdAt: new Date("2024-01-14T08:53:00").getTime(),
+      stage: "pending",
+      image: null,
+      imageName: null,
+    },
+    {
+      id: uid(),
+      type: "mission",
+      tag: "Industry",
+      title: "Industri Pangkas Emisi",
+      author: "Industry Team",
+      authorRole: "Contributor",
+      description:
+        "Mendorong industri untuk mengurangi emisi karbon melalui teknologi bersih.",
+      missionPoints: "90",
+      createdAt: new Date("2024-01-14T09:53:00").getTime(),
+      stage: "approved",
+      image: null,
+      imageName: null,
+    },
+  ];
 }
 
 function load() {
@@ -32,86 +183,98 @@ function formatDateTime(date) {
   return `${day}/${month}/${year} ${hh}:${mm}`;
 }
 
-function render(filter = "all", query = "") {
-  contentList.innerHTML = "";
+function render(query = "") {
+  articleTableBody.innerHTML = "";
+  missionTableBody.innerHTML = "";
   const normalized = query.toLowerCase();
 
-  const filteredItems = items
-    .filter((it) => (filter === "all" ? true : it.type === filter))
+  const articles = items
+    .filter((it) => it.type === "article")
     .filter((it) =>
       (it.title + it.author + it.tag).toLowerCase().includes(normalized)
     );
 
-  filteredItems.forEach((it) => {
-    const node = template.content.firstElementChild.cloneNode(true);
-    node.dataset.id = it.id;
-    node.querySelector(".pill.tag").textContent = it.tag;
-    node.querySelector(".title").textContent = it.title;
-    node.querySelector(".author").textContent = it.author;
-    node.querySelector(".time").textContent = formatDateTime(
-      it.updatedAt || it.createdAt
+  const missions = items
+    .filter((it) => it.type === "mission")
+    .filter((it) =>
+      (it.title + it.author + it.tag).toLowerCase().includes(normalized)
     );
 
-    const aiCheckEl = node.querySelector(".ai-check");
-    if (it.updatedAt && it.updatedAt !== it.createdAt) {
-      aiCheckEl.textContent = "Edited";
-    } else {
-      aiCheckEl.textContent = "";
-    }
+  if (articles.length === 0) {
+    articleTableBody.innerHTML =
+      '<tr><td colspan="7"><div class="empty-state">No articles found</div></td></tr>';
+  } else {
+    articles.forEach((it, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td><span class="table-id">${index + 1}</span></td>
+        <td><span class="table-title" title="${it.title}">${
+        it.title
+      }</span></td>
+        <td>${it.author}</td>
+        <td>${it.authorRole || "-"}</td>
+        <td>${it.place || "-"}</td>
+        <td>${formatDateTime(it.updatedAt || it.createdAt)}</td>
+        <td>
+          <div class="table-actions">
+            <button class="icon-btn edit" title="Edit" data-id="${it.id}">
+              <img src="../page_hapis/assets/edit.png" alt="Edit" />
+            </button>
+            <button class="icon-btn delete" title="Delete" data-id="${it.id}">
+              <img src="../page_hapis/assets/trashbin.png" alt="Delete" />
+            </button>
+          </div>
+        </td>
+      `;
 
-    const pointsEl = node.querySelector(".mission-points");
-    if (it.type === "mission" && it.missionPoints) {
-      pointsEl.textContent = `🎯 ${it.missionPoints} Points`;
-      pointsEl.classList.add("show");
-    }
+      row
+        .querySelector(".edit")
+        .addEventListener("click", () => openEdit(it.id));
+      row.querySelector(".delete").addEventListener("click", () => del(it.id));
 
-    const descEl = node.querySelector(".description");
-    if (it.description) {
-      descEl.textContent = it.description;
-    } else {
-      descEl.textContent = "No description available.";
-    }
+      articleTableBody.appendChild(row);
+    });
+  }
 
-    const imgEl = node.querySelector(".card-image");
-    if (it.image) {
-      if (it.image.startsWith("data:image")) {
-        imgEl.src = it.image;
-      } else {
-        imgEl.src = `https://placehold.co/400x300/e2e8f0/64748b?text=${encodeURIComponent(
-          it.imageName || it.image
-        )}`;
-      }
-      imgEl.alt = it.title;
-      imgEl.classList.add("has-image");
-    }
+  if (missions.length === 0) {
+    missionTableBody.innerHTML =
+      '<tr><td colspan="7"><div class="empty-state">No missions found</div></td></tr>';
+  } else {
+    missions.forEach((it, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td><span class="table-id">${index + 1}</span></td>
+        <td><span class="table-title" title="${it.title}">${
+        it.title
+      }</span></td>
+        <td>${it.author}</td>
+        <td>${it.authorRole || "-"}</td>
+        <td>${it.missionPoints || "-"} pts</td>
+        <td>${formatDateTime(it.updatedAt || it.createdAt)}</td>
+        <td>
+          <div class="table-actions">
+            <button class="icon-btn edit" title="Edit" data-id="${it.id}">
+              <img src="../page_hapis/assets/edit.png" alt="Edit" />
+            </button>
+            <button class="icon-btn delete" title="Delete" data-id="${it.id}">
+              <img src="../page_hapis/assets/trashbin.png" alt="Delete" />
+            </button>
+          </div>
+        </td>
+      `;
 
-    node.removeAttribute("draggable");
+      row
+        .querySelector(".edit")
+        .addEventListener("click", () => openEdit(it.id));
+      row.querySelector(".delete").addEventListener("click", () => del(it.id));
 
-    $(".edit", node).addEventListener("click", () => openEdit(it.id));
-    $(".delete", node).addEventListener("click", () => del(it.id));
-
-    contentList.appendChild(node);
-  });
-
-  if (filteredItems.length === 0) {
-    contentList.innerHTML = '<div class="empty-state">No items found</div>';
+      missionTableBody.appendChild(row);
+    });
   }
 }
 render();
 
-let currentFilter = "all";
-$$(".seg-btn").forEach((btn) =>
-  btn.addEventListener("click", () => {
-    $$(".seg-btn").forEach((b) => b.classList.remove("is-active"));
-    btn.classList.add("is-active");
-    currentFilter = btn.dataset.filter;
-    render(currentFilter, $("#searchInput").value);
-  })
-);
-
-$("#searchInput").addEventListener("input", (e) =>
-  render(currentFilter, e.target.value)
-);
+$("#searchInput").addEventListener("input", (e) => render(e.target.value));
 
 const modal = $("#modal");
 const closeModalBtn = $("#closeModal");
@@ -167,7 +330,6 @@ function openEdit(id) {
   $("#description").value = it.description || "";
   $("#topic").value = it.tag || "";
 
-  // Handle place field (only for articles)
   const placeField = $("#placeField");
   if (it.type === "article") {
     placeField.style.display = "flex";
@@ -250,23 +412,21 @@ form.addEventListener("submit", (e) => {
 
   save(items);
   closeModal();
-  render(currentFilter, $("#searchInput").value);
+  render($("#searchInput").value);
 });
 
 function del(id) {
   if (!confirm("Delete this item?")) return;
   items = items.filter((x) => x.id !== id);
   save(items);
-  render(currentFilter, $("#searchInput").value);
+  render($("#searchInput").value);
 }
 
-// Logout functionality
 const logoutBtn = $("#logoutBtn");
 if (logoutBtn) {
   logoutBtn.addEventListener("click", () => {
     if (confirm("Are you sure you want to logout?")) {
-      // Redirect to login page
-      window.location.href = "../page_Hizkia/index.html";
+      window.location.href = "../page_Syarif/index.html";
     }
   });
 }
