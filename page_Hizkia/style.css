@@ -40,7 +40,9 @@ body {
 
 .logo-section {
   flex: 1;
-  background: var(--logo-bg);
+  background-image: url("../components/login_hero.jpg");
+  background-position: center;
+  background-size: cover;
   display: flex;
   align-items: center;
   justify-content: center;
