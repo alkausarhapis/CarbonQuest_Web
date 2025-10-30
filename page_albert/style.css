@@ -1,4 +1,4 @@
-/* Article Page Styles */
+/* Mission Page Styles */
 :root {
   --bg: #0b0c10;
   --sidebar: #121317;
@@ -50,7 +50,7 @@ body {
   margin-bottom: 24px;
 }
 
-.panel-title {
+.header-title {
   font-size: 28px;
   font-weight: 700;
   margin: 0;
@@ -122,6 +122,11 @@ form {
   margin-bottom: 4px;
 }
 
+.input-label.wajib::after {
+  content: " *";
+  color: #ef4444;
+}
+
 .text-input {
   padding: 12px 16px;
   border-radius: 12px;
@@ -131,6 +136,10 @@ form {
   font-size: 14px;
   font-family: inherit;
   transition: all 0.2s;
+}
+
+input[type="number"].text-input {
+  padding: 12px 16px;
 }
 
 .text-input:focus {
@@ -160,16 +169,6 @@ textarea.text-input {
   background: #fff;
 }
 
-/* Grid Layout */
-.grid {
-  display: grid;
-  gap: 16px;
-}
-
-.grid-2 {
-  grid-template-columns: 1fr 1fr;
-}
-
 /* Image Box */
 .image-box {
   background: #f8fafc;
@@ -191,6 +190,20 @@ textarea.text-input {
   display: none;
 }
 
+/* Bottom Form Layout (for Mission) */
+.bottomForm {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.leftBottomForm,
+.rightBottomForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 /* Responsive */
 @media (max-width: 1100px) {
   .main-content {
@@ -200,7 +213,7 @@ textarea.text-input {
 }
 
 @media (max-width: 768px) {
-  .grid-2 {
+  .bottomForm {
     grid-template-columns: 1fr;
   }
 
@@ -210,7 +223,7 @@ textarea.text-input {
     gap: 12px;
   }
 
-  .panel-title {
+  .header-title {
     font-size: 22px;
   }
 
