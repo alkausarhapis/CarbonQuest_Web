@@ -1,30 +1,31 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
+  // Tinggi offset untuk navbar
+  const NAV_OFFSET = 75;
 
-    const navbarHeight = 75; // Tinggi Navbar tetap (sesuai padding-top di CSS)
+  // Mendapatkan semua tautan yang href-nya dimulai dengan '#'
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener("click", function (e) {
+      const href = this.getAttribute("href");
+      
+      // Cegah loncatan default browser
+      e.preventDefault(); 
+      
+      // Cek apakah itu tautan kembali ke atas saja (#)
+      if (href === "#") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+      
+      // Cari elemen target (seperti #features)
+      const targetElement = document.querySelector(href);
 
-    // Smooth Scroll 
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener("click", function(e) {
-            e.preventDefault();
-            
-            const href = this.getAttribute("href");
-            
-            if (href === "#") {
-                window.scrollTo({ top: 0, behavior: "smooth" });
-                return;
-            }
-
-            const targetElement = document.querySelector(href);
-            
-            if (targetElement) {
-                // Scroll ke posisi, dikurangi tinggi navbar
-                const targetPosition = targetElement.offsetTop - navbarHeight;
-                
-                window.scrollTo({
-                    top: targetPosition,
-                    behavior: "smooth"
-                });
-            }
+      if (targetElement) {
+        // Lakukan scroll ke posisi elemen, dikurangi offset navbar
+        window.scrollTo({
+          top: targetElement.offsetTop - NAV_OFFSET,
+          behavior: "smooth",
         });
+      }
     });
+  });
 });
