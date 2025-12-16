@@ -4,13 +4,11 @@ import { watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { useDarkMode } from "./composables/useDarkMode";
 
-// Import icons
-import logoLight from "./assets/img/logo.png";
+import logoLight from "./assets/img/favicon.ico";
 
 const route = useRoute();
 const { isDark } = useDarkMode();
 
-// Page title mapping
 const pageTitles = {
   "/": "Dashboard",
   "/login": "Login",
@@ -22,11 +20,9 @@ const pageTitles = {
   "/quizzes/create": "Buat Quiz",
 };
 
-// Update page title and favicon based on route and dark mode
 watchEffect(() => {
   let title = "CarbonQuest";
 
-  // Check exact path first
   if (pageTitles[route.path]) {
     title = `${pageTitles[route.path]} - CarbonQuest`;
   } else if (route.path.startsWith("/articles/edit")) {
@@ -39,7 +35,6 @@ watchEffect(() => {
 
   document.title = title;
 
-  // Update favicon based on dark mode
   const favicon = document.getElementById("favicon");
   if (favicon) {
     favicon.href = logoLight;
