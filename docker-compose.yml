@@ -18,8 +18,7 @@ services:
     restart: unless-stopped
     command: tunnel --no-autoupdate run
     environment:
-      - TUNNEL_TOKEN=eyJhIjoiMWE0YTM1MGQ3M2EyYTQ5ZmNjNjdhMmE0NDc4Zjk1NDAiLCJ0IjoiYTNlOTc0YTgtOGIwNi00YjRhLWI2MmMtYmM5YzQ3YTA0NTVmIiwicyI6Ik1tVTNNamxqWWpJdE56VXhNQzAwWldFMUxUazJZV1F0WkdGaU9EaGhaV1l5TVRZeSJ9
-    networks:
+      - TUNNEL_TOKEN=eyJhIjoiMWE0YTM1MGQ3M2EyYTQ5ZmNjNjdhMmE0NDc4Zjk1NDAiLCJ0IjoiZjJiMzQ5MmMtNWRjOS00Y2I3LWEzOWItODkwMjgwZDI3YWIxIiwicyI6Ik5EWTRaVFkwTjJVdE16TXdNaTAwTW1Zd0xUaGlabVV0TVRRMk1EYzVNMkpoWmprMiJ9
       - carbonquest-network
     depends_on:
       - carbonquest-web
