@@ -1,0 +1,29 @@
+services:
+  # Vue.js Frontend
+  carbonquest-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: carbonquest-web
+    restart: unless-stopped
+    networks:
+      - carbonquest-network
+    expose:
+      - "80"
+
+  # Cloudflare Tunnel
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared-tunnel
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=eyJhIjoiMWE0YTM1MGQ3M2EyYTQ5ZmNjNjdhMmE0NDc4Zjk1NDAiLCJ0IjoiYTNlOTc0YTgtOGIwNi00YjRhLWI2MmMtYmM5YzQ3YTA0NTVmIiwicyI6Ik1tVTNNamxqWWpJdE56VXhNQzAwWldFMUxUazJZV1F0WkdGaU9EaGhaV1l5TVRZeSJ9
+    networks:
+      - carbonquest-network
+    depends_on:
+      - carbonquest-web
+
+networks:
+  carbonquest-network:
+    driver: bridge
