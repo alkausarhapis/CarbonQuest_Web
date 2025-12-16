@@ -144,43 +144,58 @@ async function handleSubmit() {
 <template>
   <div>
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold text-gray-900">Buat Quiz Baru</h1>
-      <button
-        @click="handleSubmit"
-        :disabled="quizzesStore.loading"
-        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
-      >
-        Kirim
-      </button>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+        Buat Quiz Baru
+      </h1>
+      <div class="flex gap-2">
+        <button
+          @click="router.push('/')"
+          type="button"
+          class="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+        >
+          Batal
+        </button>
+        <button
+          @click="handleSubmit"
+          :disabled="quizzesStore.loading"
+          class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+        >
+          Kirim
+        </button>
+      </div>
     </div>
 
     <form @submit.prevent="handleSubmit" class="space-y-6">
       <!-- Quiz Info -->
-      <div class="bg-white rounded-lg shadow p-6 space-y-4">
-        <h2 class="text-lg font-semibold text-gray-900">Informasi Quiz</h2>
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-4">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+          Informasi Quiz
+        </h2>
 
         <!-- Title -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2"
+          <label
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
             >Judul Quiz *</label
           >
           <input
             v-model="form.title"
             type="text"
             placeholder="contoh: Kuis Harian - Perubahan Iklim"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
             required
           />
         </div>
 
         <!-- Category -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2"
+          <label
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
             >Kategori *</label
           >
           <select
             v-model="form.category"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
           >
             <option v-for="cat in categories" :key="cat" :value="cat">
               {{ cat }}
@@ -190,7 +205,8 @@ async function handleSubmit() {
 
         <!-- Total Points (Auto-calculated) -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2"
+          <label
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
             >Total Points (otomatis)</label
           >
           <input
@@ -202,7 +218,7 @@ async function handleSubmit() {
             "
             type="number"
             disabled
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600"
+            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
           />
         </div>
       </div>
@@ -210,7 +226,7 @@ async function handleSubmit() {
       <!-- Questions -->
       <div class="space-y-4">
         <div class="flex justify-between items-center">
-          <h2 class="text-lg font-semibold text-gray-900">
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
             Pertanyaan ({{ form.questions.length }})
           </h2>
           <button
@@ -225,10 +241,10 @@ async function handleSubmit() {
         <div
           v-for="(question, qIndex) in form.questions"
           :key="qIndex"
-          class="bg-white rounded-lg shadow p-6 space-y-4"
+          class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-4"
         >
           <div class="flex justify-between items-center">
-            <h3 class="font-semibold text-gray-900">
+            <h3 class="font-semibold text-gray-900 dark:text-white">
               Pertanyaan {{ qIndex + 1 }}
             </h3>
             <button
@@ -243,35 +259,38 @@ async function handleSubmit() {
 
           <!-- Question Content -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2"
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >Pertanyaan *</label
             >
             <textarea
               v-model="question.content"
               rows="3"
               placeholder="Tuliskan pertanyaan di sini..."
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-y"
+              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
               required
             ></textarea>
           </div>
 
           <!-- Question Points -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2"
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >Poin untuk pertanyaan ini</label
             >
             <input
               v-model.number="question.points"
               type="number"
               min="1"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
             />
           </div>
 
           <!-- Answers -->
           <div class="space-y-3">
             <div class="flex justify-between items-center">
-              <label class="block text-sm font-medium text-gray-700"
+              <label
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                 >Jawaban (min. 2) *</label
               >
               <button
@@ -300,7 +319,7 @@ async function handleSubmit() {
                 v-model="answer.content"
                 type="text"
                 placeholder="Tuliskan jawaban..."
-                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
               />
               <button
                 v-if="question.answers.length > 2"
@@ -311,7 +330,7 @@ async function handleSubmit() {
                 Hapus
               </button>
             </div>
-            <p class="text-sm text-gray-500">
+            <p class="text-sm text-gray-500 dark:text-gray-400">
               Klik radio button untuk menandai jawaban yang benar
             </p>
           </div>

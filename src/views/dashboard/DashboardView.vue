@@ -158,9 +158,9 @@ const deleteDialogMessage = computed(() => {
           </div>
         </div>
       </div>
-      <div class="overflow-x-auto">
+      <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
         <table class="w-full">
-          <thead class="bg-gray-50 dark:bg-gray-700">
+          <thead class="bg-gray-50 dark:bg-gray-700 sticky top-0">
             <tr>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
@@ -321,9 +321,9 @@ const deleteDialogMessage = computed(() => {
           </div>
         </div>
       </div>
-      <div class="overflow-x-auto">
+      <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
         <table class="w-full">
-          <thead class="bg-gray-50 dark:bg-gray-700">
+          <thead class="bg-gray-50 dark:bg-gray-700 sticky top-0">
             <tr>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
@@ -482,9 +482,9 @@ const deleteDialogMessage = computed(() => {
           </div>
         </div>
       </div>
-      <div class="overflow-x-auto">
+      <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
         <table class="w-full">
-          <thead class="bg-gray-50 dark:bg-gray-700">
+          <thead class="bg-gray-50 dark:bg-gray-700 sticky top-0">
             <tr>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"

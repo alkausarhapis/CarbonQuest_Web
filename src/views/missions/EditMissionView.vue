@@ -112,7 +112,7 @@ async function handleSubmit() {
         <button
           @click="router.push('/')"
           type="button"
-          class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+          class="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition"
         >
           Batal
         </button>
@@ -126,12 +126,16 @@ async function handleSubmit() {
       </div>
     </div>
 
-    <div v-if="loading" class="text-center py-8">Memuat...</div>
+    <div v-if="loading" class="text-gray-600 dark:text-gray-400 text-center">
+      Memuat...
+    </div>
 
     <form v-else @submit.prevent="handleSubmit" class="space-y-6">
       <!-- Mission Title -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">
+        <label
+          class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+        >
           Mission Title<span class="text-red-500">*</span>
         </label>
         <input
@@ -139,13 +143,15 @@ async function handleSubmit() {
           type="text"
           placeholder="Ketik title disini"
           required
-          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
         />
       </div>
 
       <!-- Tags -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">
+        <label
+          class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+        >
           Tag Misi<span class="text-red-500">*</span>
         </label>
         <input
@@ -153,35 +159,39 @@ async function handleSubmit() {
           type="text"
           placeholder="e.g. education, sustainability"
           required
-          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
         />
       </div>
 
       <!-- Description -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2"
+        <label
+          class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
           >Description</label
         >
         <textarea
           v-model="form.description"
           rows="4"
           placeholder="Masukan deskripsi mission"
-          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-y"
+          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-y bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
         ></textarea>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Cover Image -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2"
+          <label
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
             >Cover image</label
           >
-          <div class="border-2 border-dashed border-gray-300 rounded-lg p-6">
+          <div
+            class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 bg-gray-50 dark:bg-gray-800"
+          >
             <div class="flex gap-2 mb-4">
               <button
                 type="button"
                 @click="$refs.fileInput.click()"
-                class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
               >
                 Cari
               </button>
@@ -207,43 +217,48 @@ async function handleSubmit() {
                 class="max-h-48 rounded-lg"
               />
             </div>
-            <p v-else class="text-gray-400 text-center">No image selected</p>
+            <p v-else class="text-gray-400 dark:text-gray-500 text-center">
+              No image selected
+            </p>
           </div>
         </div>
 
         <!-- Right Side Fields -->
         <div class="space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2"
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >Photo Caption</label
             >
             <input
               v-model="form.photoCaption"
               type="text"
               placeholder="Short caption"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2"
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >Author Name</label
             >
             <input
               v-model="form.authorName"
               type="text"
               placeholder="Enter author name"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2"
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >Author Role</label
             >
             <select
               v-model="form.authorRole"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
             >
               <option value="">Select role</option>
               <option v-for="role in roles" :key="role" :value="role">
@@ -253,14 +268,15 @@ async function handleSubmit() {
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2"
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >Mission Points</label
             >
             <input
               v-model="form.points"
               type="number"
               placeholder="Enter points (e.g., 100)"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
             />
           </div>
         </div>
@@ -268,14 +284,15 @@ async function handleSubmit() {
 
       <!-- Highlights -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2"
+        <label
+          class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
           >Highlights</label
         >
         <textarea
           v-model="form.highlights"
           rows="4"
           placeholder="Key points or bullets..."
-          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-y"
+          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-y bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
         ></textarea>
       </div>
 

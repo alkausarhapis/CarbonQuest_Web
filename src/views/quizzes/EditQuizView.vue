@@ -163,17 +163,19 @@ async function handleSubmit() {
 <template>
   <div>
     <div v-if="loading" class="text-center py-12">
-      <div class="text-gray-600">Memuat...</div>
+      <div class="text-gray-600 dark:text-gray-400 text-center">Memuat...</div>
     </div>
 
     <div v-else>
       <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Edit Quiz</h1>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+          Edit Quiz
+        </h1>
         <div class="flex gap-2">
           <button
             @click="router.push('/')"
             type="button"
-            class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+            class="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition"
           >
             Batal
           </button>
@@ -189,29 +191,35 @@ async function handleSubmit() {
 
       <form @submit.prevent="handleSubmit" class="space-y-6">
         <!-- Quiz Basic Info -->
-        <div class="bg-white rounded-lg shadow p-6 space-y-4">
-          <h2 class="text-lg font-semibold text-gray-900">Informasi Quiz</h2>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-4">
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+            Informasi Quiz
+          </h2>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
               Judul Quiz
             </label>
             <input
               v-model="form.title"
               type="text"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
               placeholder="Masukkan judul quiz"
               required
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
               Kategori
             </label>
             <select
               v-model="form.category"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             >
               <option v-for="cat in categories" :key="cat" :value="cat">
                 {{ cat }}
@@ -220,16 +228,18 @@ async function handleSubmit() {
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
               Total Points
             </label>
             <input
               :value="form.totalPoints"
               type="number"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100"
+              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
               readonly
             />
-            <p class="text-sm text-gray-500 mt-1">
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
               Total points dihitung otomatis dari semua pertanyaan
             </p>
           </div>
@@ -238,7 +248,9 @@ async function handleSubmit() {
         <!-- Questions -->
         <div class="space-y-4">
           <div class="flex justify-between items-center">
-            <h2 class="text-lg font-semibold text-gray-900">Pertanyaan</h2>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+              Pertanyaan
+            </h2>
             <button
               type="button"
               @click="addQuestion"
@@ -251,10 +263,10 @@ async function handleSubmit() {
           <div
             v-for="(question, qIndex) in form.questions"
             :key="qIndex"
-            class="bg-white rounded-lg shadow p-6 space-y-4"
+            class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-4"
           >
             <div class="flex justify-between items-start">
-              <h3 class="text-md font-semibold text-gray-900">
+              <h3 class="text-md font-semibold text-gray-900 dark:text-white">
                 Pertanyaan {{ qIndex + 1 }}
               </h3>
               <button
@@ -268,12 +280,14 @@ async function handleSubmit() {
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 Pertanyaan
               </label>
               <textarea
                 v-model="question.content"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                 rows="3"
                 placeholder="Masukkan pertanyaan"
                 required
@@ -282,13 +296,15 @@ async function handleSubmit() {
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 Points
               </label>
               <input
                 v-model.number="question.points"
                 type="number"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 placeholder="10"
                 min="1"
                 required
@@ -299,7 +315,9 @@ async function handleSubmit() {
             <!-- Answers -->
             <div class="space-y-3">
               <div class="flex justify-between items-center">
-                <label class="block text-sm font-medium text-gray-700">
+                <label
+                  class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
                   Jawaban (Pilih jawaban yang benar)
                 </label>
                 <button
@@ -326,7 +344,7 @@ async function handleSubmit() {
                 <input
                   v-model="answer.content"
                   type="text"
-                  class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                   :placeholder="`Jawaban ${aIndex + 1}`"
                 />
                 <button
