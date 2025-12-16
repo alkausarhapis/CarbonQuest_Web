@@ -45,7 +45,7 @@ onMounted(async () => {
       imagePreview.value = `https://carbonquest-api.bintangap.my.id${mission.cover_image}`;
     }
   } catch (error) {
-    console.error("Failed to fetch mission:", error);
+    // Error handled
   } finally {
     loading.value = false;
   }
@@ -99,7 +99,7 @@ async function handleSubmit() {
     await missionsStore.updateMission(route.params.id, formData);
     router.push("/");
   } catch (error) {
-    console.error("Failed to update mission:", error);
+    // Error handled by store
   }
 }
 </script>

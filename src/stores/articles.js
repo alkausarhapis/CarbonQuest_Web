@@ -29,30 +29,13 @@ export const useArticlesStore = defineStore("articles", () => {
     error.value = null;
 
     try {
-      console.log("=== CREATE ARTICLE ===");
-      console.log("Sending FormData");
-
       // Axios akan otomatis set Content-Type: multipart/form-data dengan boundary
       // JANGAN set manual karena akan hilangkan boundary yang dibutuhkan
       const response = await api.post("/articles", articleData);
 
-      console.log("Create article response:", response.data);
-      console.log("Response status:", response.status);
-
       await fetchArticles();
       return response.data;
     } catch (err) {
-      console.error("=== CREATE ARTICLE ERROR ===");
-      console.error("Full error:", err);
-      console.error("Response status:", err.response?.status);
-      console.error(
-        "Response data (stringified):",
-        JSON.stringify(err.response?.data, null, 2)
-      );
-      console.error("Response data (raw):", err.response?.data);
-      console.error("Response headers:", err.response?.headers);
-      console.error("Error message:", err.message);
-
       error.value = err.response?.data?.message || "Gagal membuat artikel";
       throw err;
     } finally {

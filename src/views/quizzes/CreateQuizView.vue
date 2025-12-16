@@ -133,11 +133,9 @@ async function handleSubmit() {
       })),
     };
 
-    console.log("Submitting quiz:", quizData);
     await quizzesStore.createQuiz(quizData);
     router.push("/");
   } catch (error) {
-    console.error("Failed to create quiz:", error);
     alert(error.response?.data?.message || "Gagal membuat quiz");
   }
 }

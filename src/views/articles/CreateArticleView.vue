@@ -26,28 +26,14 @@ const roles = ["Admin", "Editor", "Writer", "Contributor"];
 
 function handleImageSelect(event) {
   const file = event.target.files[0];
-  console.log("=== handleImageSelect called ===");
-  console.log("Selected file:", file);
   if (file) {
-    console.log("File details:", {
-      name: file.name,
-      size: file.size,
-      type: file.type,
-    });
     form.value.coverImageFile = file;
-    console.log(
-      "Stored in form.value.coverImageFile:",
-      form.value.coverImageFile
-    );
     // Create preview
     const reader = new FileReader();
     reader.onload = (e) => {
       imagePreview.value = e.target.result;
-      console.log("Preview created successfully");
     };
     reader.readAsDataURL(file);
-  } else {
-    console.warn("No file selected from input!");
   }
 }
 
@@ -61,9 +47,6 @@ function removeImage() {
 
 async function handleSubmit() {
   try {
-    console.log("=== HANDLE SUBMIT CALLED ===");
-    console.log("Form values:", JSON.parse(JSON.stringify(form.value)));
-
     const formData = new FormData();
 
     // Required fields
@@ -75,15 +58,8 @@ async function handleSubmit() {
     if (form.value.description)
       formData.append("description", form.value.description);
 
-    // Debug: check if file exists
-    console.log("Cover image file:", form.value.coverImageFile);
     if (form.value.coverImageFile) {
-      console.log("File name:", form.value.coverImageFile.name);
-      console.log("File size:", form.value.coverImageFile.size);
-      console.log("File type:", form.value.coverImageFile.type);
       formData.append("coverImage", form.value.coverImageFile);
-    } else {
-      console.warn("No cover image file selected!");
     }
 
     if (form.value.photoCaption)
@@ -98,18 +74,10 @@ async function handleSubmit() {
     if (form.value.highlights)
       formData.append("highlights", form.value.highlights);
 
-    console.log("Submitting article with FormData");
-    // Debug: log all FormData entries
-    for (let pair of formData.entries()) {
-      console.log(
-        pair[0] + ": " + (pair[1] instanceof File ? pair[1].name : pair[1])
-      );
-    }
-
     await articlesStore.createArticle(formData);
     router.push("/");
   } catch (error) {
-    console.error("Failed to create article:", error);
+    // Error handled by store
   }
 }
 </script>

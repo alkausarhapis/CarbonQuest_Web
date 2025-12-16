@@ -68,18 +68,10 @@ async function handleSubmit() {
     if (form.value.highlights)
       formData.append("highlights", form.value.highlights);
 
-    console.log("Submitting mission with FormData");
-    // Debug: log all FormData entries
-    for (let pair of formData.entries()) {
-      console.log(
-        pair[0] + ": " + (pair[1] instanceof File ? pair[1].name : pair[1])
-      );
-    }
-
     await missionsStore.createMission(formData);
     router.push("/");
   } catch (error) {
-    console.error("Failed to create mission:", error);
+    // Error handled by store
   }
 }
 </script>

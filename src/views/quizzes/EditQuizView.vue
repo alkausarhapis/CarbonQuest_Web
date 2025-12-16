@@ -39,7 +39,6 @@ onMounted(async () => {
       }));
     }
   } catch (error) {
-    console.error("Failed to load quiz:", error);
     alert("Gagal memuat data quiz");
     router.push("/");
   } finally {
@@ -153,11 +152,9 @@ async function handleSubmit() {
       })),
     };
 
-    console.log("Updating quiz:", quizData);
     await quizzesStore.updateQuiz(route.params.id, quizData);
     router.push("/");
   } catch (error) {
-    console.error("Failed to update quiz:", error);
     alert(error.response?.data?.message || "Gagal mengupdate quiz");
   }
 }

@@ -48,7 +48,7 @@ onMounted(async () => {
       imagePreview.value = `https://carbonquest-api.bintangap.my.id${article.cover_image}`;
     }
   } catch (error) {
-    console.error("Failed to fetch article:", error);
+    // Error handled
   } finally {
     loading.value = false;
   }
@@ -103,7 +103,7 @@ async function handleSubmit() {
     await articlesStore.updateArticle(route.params.id, formData);
     router.push("/");
   } catch (error) {
-    console.error("Failed to update article:", error);
+    // Error handled by store
   }
 }
 </script>

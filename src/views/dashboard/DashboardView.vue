@@ -52,21 +52,9 @@ const filteredQuizzes = computed(() => {
 });
 
 onMounted(() => {
-  articlesStore.fetchArticles().then(() => {
-    console.log("Articles data:", articlesStore.articles);
-    if (articlesStore.articles.length > 0) {
-      console.log("Sample article:", articlesStore.articles[0]);
-    }
-  });
-  missionsStore.fetchMissions().then(() => {
-    console.log("Missions data:", missionsStore.missions);
-    if (missionsStore.missions.length > 0) {
-      console.log("Sample mission:", missionsStore.missions[0]);
-    }
-  });
-  quizzesStore.fetchQuizzes().then(() => {
-    console.log("Quizzes data:", quizzesStore.quizzes);
-  });
+  articlesStore.fetchArticles();
+  missionsStore.fetchMissions();
+  quizzesStore.fetchQuizzes();
 });
 
 function formatDate(dateString) {

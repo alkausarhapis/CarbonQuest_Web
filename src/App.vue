@@ -14,6 +14,7 @@ const { isDark } = useDarkMode();
 const pageTitles = {
   "/": "Dashboard",
   "/login": "Login",
+  "/change-password": "Ganti Password",
   "/articles": "Artikel",
   "/articles/create": "Buat Artikel",
   "/missions": "Misi",

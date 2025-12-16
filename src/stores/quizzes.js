@@ -43,19 +43,11 @@ export const useQuizzesStore = defineStore("quizzes", () => {
     error.value = null;
 
     try {
-      console.log("=== CREATE QUIZ ===");
-      console.log("Sending quiz data:", quizData);
-
       const response = await api.post("/quizzes", quizData);
 
-      console.log("Create quiz response:", response.data);
       await fetchQuizzes();
       return response.data;
     } catch (err) {
-      console.error("=== CREATE QUIZ ERROR ===");
-      console.error("Full error:", err);
-      console.error("Response data:", err.response?.data);
-
       error.value = err.response?.data?.message || "Gagal membuat quiz";
       throw err;
     } finally {

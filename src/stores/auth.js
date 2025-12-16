@@ -6,7 +6,6 @@ function safeParseJSON(value) {
   try {
     return value ? JSON.parse(value) : null;
   } catch (e) {
-    console.error("Error parsing JSON:", e);
     return null;
   }
 }
@@ -31,11 +30,6 @@ export const useAuthStore = defineStore("auth", () => {
         password,
       });
 
-      console.log("=== LOGIN SUCCESS ===");
-      console.log("Response data:", response.data);
-      console.log("Response headers:", response.headers);
-      console.log("Response status:", response.status);
-
       // Handle different response formats
       const data = response.data;
       const authToken = data.token || data.data?.token;
@@ -54,13 +48,6 @@ export const useAuthStore = defineStore("auth", () => {
 
       return true;
     } catch (err) {
-      console.error("=== LOGIN ERROR ===");
-      console.error("Full error:", err);
-      console.error("Error response:", err.response);
-      console.error("Response status:", err.response?.status);
-      console.error("Response data:", err.response?.data);
-      console.error("Response headers:", err.response?.headers);
-
       // Handle rate limiting
       if (
         err.response?.status === 429 ||
@@ -95,6 +82,43 @@ export const useAuthStore = defineStore("auth", () => {
     localStorage.removeItem("user");
   }
 
+  async function changePassword(currentPassword, newPassword) {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const response = await api.put(
+        "/organizations/password",
+        {
+          oldPassword: currentPassword,
+          newPassword: newPassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token.value}`,
+          },
+        }
+      );
+
+      return true;
+    } catch (err) {
+      if (err.response?.status === 401) {
+        error.value = "Password saat ini salah.";
+      } else if (err.response?.status === 403) {
+        error.value = "Anda tidak memiliki akses untuk mengubah password.";
+      } else if (err.response?.status === 400) {
+        error.value = err.response?.data?.message || "Password tidak valid.";
+      } else {
+        error.value =
+          err.response?.data?.message ||
+          "Gagal mengubah password. Silakan coba lagi.";
+      }
+      return false;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     user,
     token,
@@ -104,5 +128,6 @@ export const useAuthStore = defineStore("auth", () => {
     userName,
     login,
     logout,
+    changePassword,
   };
 });
