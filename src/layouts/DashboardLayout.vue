@@ -5,6 +5,7 @@ import { useAuthStore } from "../stores/auth";
 import { useDarkMode } from "../composables/useDarkMode";
 
 // Import icons
+import logoIcon from "../assets/img/Logo.png";
 import dashboardWhiteIcon from "../assets/img/dashboard_white.png";
 import artikelWhiteIcon from "../assets/img/artikel_white.png";
 import missionWhiteIcon from "../assets/img/mission_white.png";
@@ -53,26 +54,18 @@ function isActive(path) {
 
 <template>
   <div
-    class="flex h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden transition-colors duration-200"
+    class="flex h-screen overflow-hidden transition-colors duration-200 bg-gray-50 dark:bg-gray-900"
   >
-    <!-- Sidebar -->
     <aside
-      class="w-56 bg-sidebar dark:bg-gray-800 text-white flex flex-col flex-shrink-0 transition-colors duration-200"
+      class="flex flex-col flex-shrink-0 w-56 text-white transition-colors duration-200 bg-sidebar dark:bg-gray-800"
     >
-      <!-- Logo -->
-      <div class="p-4 flex items-center gap-2">
-        <div
-          class="w-10 h-10 bg-cyan-400 rounded-full flex items-center justify-center"
-        >
-          <svg
-            class="w-6 h-6 text-white"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"
-            />
-          </svg>
+      <div class="flex items-center gap-2 p-4">
+        <div class="flex items-center justify-center w-10 h-10">
+          <img
+            :src="logoIcon"
+            alt="CarbonQuest Logo"
+            class="object-contain w-10 h-10"
+          />
         </div>
         <span class="text-xl font-bold"
           >Carbon<span class="text-cyan-400">Quest</span></span
@@ -98,10 +91,10 @@ function isActive(path) {
       </nav>
 
       <!-- Logout Button -->
-      <div class="p-4 flex-shrink-0 space-y-2">
+      <div class="flex-shrink-0 p-4 space-y-2">
         <RouterLink
           to="/change-password"
-          class="w-full flex items-center gap-3 px-4 py-3 bg-gray-700 dark:bg-gray-600 text-white rounded-lg hover:bg-gray-600 dark:hover:bg-gray-500 transition"
+          class="flex items-center w-full gap-3 px-4 py-3 text-white transition bg-gray-700 rounded-lg dark:bg-gray-600 hover:bg-gray-600 dark:hover:bg-gray-500"
         >
           <svg
             class="w-5 h-5"
@@ -120,7 +113,7 @@ function isActive(path) {
         </RouterLink>
         <button
           @click="handleLogout"
-          class="w-full flex items-center gap-3 px-4 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+          class="flex items-center w-full gap-3 px-4 py-3 text-white transition bg-red-500 rounded-lg hover:bg-red-600"
         >
           <svg
             class="w-5 h-5"
@@ -141,10 +134,10 @@ function isActive(path) {
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 flex flex-col overflow-hidden">
+    <main class="flex flex-col flex-1 overflow-hidden">
       <!-- Header -->
       <header
-        class="bg-white dark:bg-gray-800 shadow-sm px-6 py-4 flex items-center justify-between flex-shrink-0 transition-colors duration-200"
+        class="flex items-center justify-between flex-shrink-0 px-6 py-4 transition-colors duration-200 bg-white shadow-sm dark:bg-gray-800"
       >
         <div>
           <p class="text-sm text-gray-500 dark:text-gray-400">
@@ -159,7 +152,7 @@ function isActive(path) {
         <button
           @click.stop="toggleDarkMode"
           type="button"
-          class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
+          class="p-2 transition-colors duration-200 bg-gray-100 rounded-lg dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
           title="Toggle Dark Mode"
         >
           <svg
