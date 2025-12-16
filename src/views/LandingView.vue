@@ -1,7 +1,7 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { useDarkMode } from "../composables/useDarkMode";
-import logoIcon from "../assets/img/Logo.png";
+import logoIcon from "../assets/img/logo.png";
 
 const router = useRouter();
 const { isDark, toggleDarkMode } = useDarkMode();

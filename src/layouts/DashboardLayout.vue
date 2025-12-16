@@ -5,7 +5,7 @@ import { useAuthStore } from "../stores/auth";
 import { useDarkMode } from "../composables/useDarkMode";
 
 // Import icons
-import logoIcon from "../assets/img/Logo.png";
+import logoIcon from "../assets/img/logo.png";
 import dashboardWhiteIcon from "../assets/img/dashboard_white.png";
 import artikelWhiteIcon from "../assets/img/artikel_white.png";
 import missionWhiteIcon from "../assets/img/mission_white.png";

@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../../stores/auth";
 import { useDarkMode } from "../../composables/useDarkMode";
-import logoIcon from "../../assets/img/Logo.png";
+import logoIcon from "../../assets/img/logo.png";
 
 const router = useRouter();
 const authStore = useAuthStore();
