@@ -13,7 +13,16 @@ const email = ref("");
 const password = ref("");
 const showPassword = ref(false);
 
+// Clear error when user types
+function clearError() {
+  if (authStore.error) {
+    authStore.error = null;
+    localStorage.removeItem("loginError"); // Also clear from localStorage
+  }
+}
+
 async function handleLogin() {
+  // Don't clear error here - it will be cleared when user types
   const success = await authStore.login(email.value, password.value);
   if (success) {
     router.push("/");
@@ -104,6 +113,7 @@ async function handleLogin() {
             >
             <input
               v-model="email"
+              @input="clearError"
               type="email"
               placeholder="Masukkan email Anda"
               required
@@ -118,6 +128,7 @@ async function handleLogin() {
             >
             <input
               v-model="password"
+              @input="clearError"
               :type="showPassword ? 'text' : 'password'"
               placeholder="Masukkan kata sandi"
               required

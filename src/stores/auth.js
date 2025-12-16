@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { computed, ref } from "vue";
 import api from "../services/api";
 
 function safeParseJSON(value) {
@@ -14,14 +14,14 @@ export const useAuthStore = defineStore("auth", () => {
   const user = ref(safeParseJSON(localStorage.getItem("user")));
   const token = ref(localStorage.getItem("token") || null);
   const loading = ref(false);
-  const error = ref(null);
+  const error = ref(localStorage.getItem("loginError") || null);
 
   const isAuthenticated = computed(() => !!token.value);
   const userName = computed(() => user.value?.name || "Admin");
 
   async function login(email, password) {
     loading.value = true;
-    error.value = null;
+    // Don't clear error here - let the component handle it
 
     try {
       // Login sebagai organization (admin)
@@ -45,6 +45,7 @@ export const useAuthStore = defineStore("auth", () => {
 
       localStorage.setItem("token", authToken);
       localStorage.setItem("user", JSON.stringify(organization));
+      localStorage.removeItem("loginError"); // Clear error on success
 
       return true;
     } catch (err) {
@@ -69,6 +70,10 @@ export const useAuthStore = defineStore("auth", () => {
           err.message ||
           "Login gagal. Periksa email dan password Anda.";
       }
+
+      // Persist error to localStorage so it survives page refresh
+      localStorage.setItem("loginError", error.value);
+
       return false;
     } finally {
       loading.value = false;
