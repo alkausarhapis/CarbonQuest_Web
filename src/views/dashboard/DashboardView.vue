@@ -1,14 +1,17 @@
 <script setup>
-import { onMounted, ref, computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { RouterLink } from "vue-router";
+import ConfirmDialog from "../../components/ConfirmDialog.vue";
+import LoadingSpinner from "../../components/LoadingSpinner.vue";
 import { useArticlesStore } from "../../stores/articles";
 import { useMissionsStore } from "../../stores/missions";
 import { useQuizzesStore } from "../../stores/quizzes";
-import ConfirmDialog from "../../components/ConfirmDialog.vue";
+import { useToastStore } from "../../stores/toast";
 
 const articlesStore = useArticlesStore();
 const missionsStore = useMissionsStore();
 const quizzesStore = useQuizzesStore();
+const toastStore = useToastStore();
 
 const articleSearch = ref("");
 const missionSearch = ref("");
@@ -88,12 +91,19 @@ function deleteQuiz(id) {
 }
 
 async function confirmDelete() {
-  if (deleteType.value === "article") {
-    await articlesStore.deleteArticle(deleteTarget.value);
-  } else if (deleteType.value === "mission") {
-    await missionsStore.deleteMission(deleteTarget.value);
-  } else if (deleteType.value === "quiz") {
-    await quizzesStore.deleteQuiz(deleteTarget.value);
+  try {
+    if (deleteType.value === "article") {
+      await articlesStore.deleteArticle(deleteTarget.value);
+      toastStore.success("Artikel berhasil dihapus");
+    } else if (deleteType.value === "mission") {
+      await missionsStore.deleteMission(deleteTarget.value);
+      toastStore.success("Misi berhasil dihapus");
+    } else if (deleteType.value === "quiz") {
+      await quizzesStore.deleteQuiz(deleteTarget.value);
+      toastStore.success("Quiz berhasil dihapus");
+    }
+  } catch (err) {
+    toastStore.error("Gagal menghapus data");
   }
   showDeleteDialog.value = false;
   // Delay clearing the state to avoid text change during animation
@@ -128,16 +138,16 @@ const deleteDialogMessage = computed(() => {
   <div class="space-y-8">
     <!-- Articles Section -->
     <div
-      class="bg-white dark:bg-gray-800 rounded-lg shadow transition-colors duration-200"
+      class="transition-colors duration-200 bg-white rounded-lg shadow dark:bg-gray-800"
     >
       <div class="p-6 border-b dark:border-gray-700">
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <h2 class="text-xl font-bold text-gray-900 dark:text-white">
             Artikel
           </h2>
           <div class="relative w-64">
             <svg
-              class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+              class="absolute w-5 h-5 text-gray-400 -translate-y-1/2 left-3 top-1/2"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -153,47 +163,47 @@ const deleteDialogMessage = computed(() => {
               v-model="articleSearch"
               type="text"
               placeholder="Cari artikel..."
-              class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-colors duration-200"
+              class="w-full py-2 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-400 transition-colors duration-200 bg-white border border-gray-300 rounded-lg outline-none dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white dark:placeholder-gray-500"
             />
           </div>
         </div>
       </div>
       <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
         <table class="w-full">
-          <thead class="bg-gray-50 dark:bg-gray-700 sticky top-0">
+          <thead class="sticky top-0 bg-gray-50 dark:bg-gray-700">
             <tr>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 ID
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 Judul
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 Penulis
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 Peran
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 Tempat
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 Waktu
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase"
               >
                 Aksi
               </th>
@@ -203,9 +213,9 @@ const deleteDialogMessage = computed(() => {
             <tr v-if="articlesStore.loading">
               <td
                 colspan="6"
-                class="px-6 py-4 text-center text-gray-500 dark:text-gray-400"
+                class="px-6 py-8 text-center text-gray-500 dark:text-gray-400"
               >
-                Memuat...
+                <LoadingSpinner size="md" />
               </td>
             </tr>
             <tr v-else-if="filteredArticles.length === 0">
@@ -223,7 +233,7 @@ const deleteDialogMessage = computed(() => {
             <tr
               v-for="article in filteredArticles"
               :key="article.id_article"
-              class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150"
+              class="transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                 {{ article.id_article }}
@@ -249,7 +259,7 @@ const deleteDialogMessage = computed(() => {
                 <div class="flex gap-2">
                   <RouterLink
                     :to="`/articles/edit/${article.id_article}`"
-                    class="p-2 text-gray-600 hover:text-blue-600 transition"
+                    class="p-2 text-gray-600 transition hover:text-blue-600"
                   >
                     <svg
                       class="w-5 h-5"
@@ -267,7 +277,7 @@ const deleteDialogMessage = computed(() => {
                   </RouterLink>
                   <button
                     @click="deleteArticle(article.id_article)"
-                    class="p-2 text-gray-600 hover:text-red-600 transition"
+                    class="p-2 text-gray-600 transition hover:text-red-600"
                   >
                     <svg
                       class="w-5 h-5"
@@ -293,14 +303,14 @@ const deleteDialogMessage = computed(() => {
 
     <!-- Missions Section -->
     <div
-      class="bg-white dark:bg-gray-800 rounded-lg shadow transition-colors duration-200"
+      class="transition-colors duration-200 bg-white rounded-lg shadow dark:bg-gray-800"
     >
       <div class="p-6 border-b dark:border-gray-700">
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <h2 class="text-xl font-bold text-gray-900 dark:text-white">Misi</h2>
           <div class="relative w-64">
             <svg
-              class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+              class="absolute w-5 h-5 text-gray-400 -translate-y-1/2 left-3 top-1/2"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -316,47 +326,47 @@ const deleteDialogMessage = computed(() => {
               v-model="missionSearch"
               type="text"
               placeholder="Cari misi..."
-              class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-colors duration-200"
+              class="w-full py-2 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-400 transition-colors duration-200 bg-white border border-gray-300 rounded-lg outline-none dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white dark:placeholder-gray-500"
             />
           </div>
         </div>
       </div>
       <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
         <table class="w-full">
-          <thead class="bg-gray-50 dark:bg-gray-700 sticky top-0">
+          <thead class="sticky top-0 bg-gray-50 dark:bg-gray-700">
             <tr>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 ID
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 Judul
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 Penulis
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 Peran
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 Poin
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 Waktu
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 Aksi
               </th>
@@ -366,9 +376,9 @@ const deleteDialogMessage = computed(() => {
             <tr v-if="missionsStore.loading">
               <td
                 colspan="6"
-                class="px-6 py-4 text-center text-gray-500 dark:text-gray-400"
+                class="px-6 py-8 text-center text-gray-500 dark:text-gray-400"
               >
-                Memuat...
+                <LoadingSpinner size="md" />
               </td>
             </tr>
             <tr v-else-if="filteredMissions.length === 0">
@@ -384,7 +394,7 @@ const deleteDialogMessage = computed(() => {
             <tr
               v-for="mission in filteredMissions"
               :key="mission.id_mission"
-              class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150"
+              class="transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                 {{ mission.id_mission }}
@@ -410,7 +420,7 @@ const deleteDialogMessage = computed(() => {
                 <div class="flex gap-2">
                   <RouterLink
                     :to="`/missions/edit/${mission.id_mission}`"
-                    class="p-2 text-gray-600 hover:text-blue-600 transition"
+                    class="p-2 text-gray-600 transition hover:text-blue-600"
                   >
                     <svg
                       class="w-5 h-5"
@@ -428,7 +438,7 @@ const deleteDialogMessage = computed(() => {
                   </RouterLink>
                   <button
                     @click="deleteMission(mission.id_mission)"
-                    class="p-2 text-gray-600 hover:text-red-600 transition"
+                    class="p-2 text-gray-600 transition hover:text-red-600"
                   >
                     <svg
                       class="w-5 h-5"
@@ -454,14 +464,14 @@ const deleteDialogMessage = computed(() => {
 
     <!-- Quizzes Section -->
     <div
-      class="bg-white dark:bg-gray-800 rounded-lg shadow transition-colors duration-200"
+      class="transition-colors duration-200 bg-white rounded-lg shadow dark:bg-gray-800"
     >
       <div class="p-6 border-b dark:border-gray-700">
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <h2 class="text-xl font-bold text-gray-900 dark:text-white">Quiz</h2>
           <div class="relative w-64">
             <svg
-              class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+              class="absolute w-5 h-5 text-gray-400 -translate-y-1/2 left-3 top-1/2"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -477,47 +487,47 @@ const deleteDialogMessage = computed(() => {
               v-model="quizSearch"
               type="text"
               placeholder="Cari quiz..."
-              class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-colors duration-200"
+              class="w-full py-2 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-400 transition-colors duration-200 bg-white border border-gray-300 rounded-lg outline-none dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white dark:placeholder-gray-500"
             />
           </div>
         </div>
       </div>
       <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
         <table class="w-full">
-          <thead class="bg-gray-50 dark:bg-gray-700 sticky top-0">
+          <thead class="sticky top-0 bg-gray-50 dark:bg-gray-700">
             <tr>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 ID
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 Judul
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 Kategori
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 Pertanyaan
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 Total Poin
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 Dibuat
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 Aksi
               </th>
@@ -527,9 +537,9 @@ const deleteDialogMessage = computed(() => {
             <tr v-if="quizzesStore.loading">
               <td
                 colspan="7"
-                class="px-6 py-4 text-center text-gray-500 dark:text-gray-400"
+                class="px-6 py-8 text-center text-gray-500 dark:text-gray-400"
               >
-                Memuat...
+                <LoadingSpinner size="md" />
               </td>
             </tr>
             <tr v-else-if="filteredQuizzes.length === 0">
@@ -545,7 +555,7 @@ const deleteDialogMessage = computed(() => {
             <tr
               v-for="quiz in filteredQuizzes"
               :key="quiz.id_quiz"
-              class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150"
+              class="transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                 {{ quiz.id_quiz }}
@@ -565,7 +575,7 @@ const deleteDialogMessage = computed(() => {
                     'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200':
                       quiz.category === 'Bulanan',
                   }"
-                  class="px-2 py-1 rounded-full text-xs font-medium"
+                  class="px-2 py-1 text-xs font-medium rounded-full"
                 >
                   {{ quiz.category }}
                 </span>
@@ -583,7 +593,7 @@ const deleteDialogMessage = computed(() => {
                 <div class="flex gap-2">
                   <RouterLink
                     :to="`/quizzes/edit/${quiz.id_quiz}`"
-                    class="p-2 text-gray-600 hover:text-blue-600 transition"
+                    class="p-2 text-gray-600 transition hover:text-blue-600"
                   >
                     <svg
                       class="w-5 h-5"
@@ -601,7 +611,7 @@ const deleteDialogMessage = computed(() => {
                   </RouterLink>
                   <button
                     @click="deleteQuiz(quiz.id_quiz)"
-                    class="p-2 text-gray-600 hover:text-red-600 transition"
+                    class="p-2 text-gray-600 transition hover:text-red-600"
                   >
                     <svg
                       class="w-5 h-5"

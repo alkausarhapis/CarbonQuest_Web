@@ -2,9 +2,11 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useArticlesStore } from "../../stores/articles";
+import { useToastStore } from "../../stores/toast";
 
 const router = useRouter();
 const articlesStore = useArticlesStore();
+const toastStore = useToastStore();
 
 const form = ref({
   title: "",
@@ -75,9 +77,10 @@ async function handleSubmit() {
       formData.append("highlights", form.value.highlights);
 
     await articlesStore.createArticle(formData);
+    toastStore.success("Artikel berhasil dibuat");
     router.push("/");
   } catch (error) {
-    // Error handled by store
+    toastStore.error(articlesStore.error || "Gagal membuat artikel");
   }
 }
 </script>

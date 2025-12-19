@@ -1,12 +1,15 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { useMissionsStore } from "../../stores/missions";
+import { onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import LoadingSpinner from "../../components/LoadingSpinner.vue";
 import api from "../../services/api";
+import { useMissionsStore } from "../../stores/missions";
+import { useToastStore } from "../../stores/toast";
 
 const router = useRouter();
 const route = useRoute();
 const missionsStore = useMissionsStore();
+const toastStore = useToastStore();
 
 const form = ref({
   title: "",
@@ -25,6 +28,7 @@ const fileInput = ref(null);
 const loading = ref(true);
 
 const roles = ["Admin", "Editor", "Writer", "Contributor"];
+const tagOptions = ["transportasi", "makanan", "energi", "lingkungan"];
 
 onMounted(async () => {
   try {
@@ -97,9 +101,10 @@ async function handleSubmit() {
       formData.append("highlights", form.value.highlights);
 
     await missionsStore.updateMission(route.params.id, formData);
+    toastStore.success("Misi berhasil diperbarui");
     router.push("/");
   } catch (error) {
-    // Error handled by store
+    toastStore.error(missionsStore.error || "Gagal memperbarui misi");
   }
 }
 </script>
@@ -126,8 +131,8 @@ async function handleSubmit() {
       </div>
     </div>
 
-    <div v-if="loading" class="text-gray-600 dark:text-gray-400 text-center">
-      Memuat...
+    <div v-if="loading" class="py-12">
+      <LoadingSpinner size="lg" />
     </div>
 
     <form v-else @submit.prevent="handleSubmit" class="space-y-6">
@@ -154,13 +159,16 @@ async function handleSubmit() {
         >
           Tag Misi<span class="text-red-500">*</span>
         </label>
-        <input
+        <select
           v-model="form.tags"
-          type="text"
-          placeholder="e.g. education, sustainability"
           required
-          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-        />
+          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+        >
+          <option value="" disabled>Pilih tag misi</option>
+          <option v-for="tag in tagOptions" :key="tag" :value="tag">
+            {{ tag.charAt(0).toUpperCase() + tag.slice(1) }}
+          </option>
+        </select>
       </div>
 
       <!-- Description -->

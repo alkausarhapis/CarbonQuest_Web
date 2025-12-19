@@ -2,9 +2,11 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useMissionsStore } from "../../stores/missions";
+import { useToastStore } from "../../stores/toast";
 
 const router = useRouter();
 const missionsStore = useMissionsStore();
+const toastStore = useToastStore();
 
 const form = ref({
   title: "",
@@ -22,6 +24,7 @@ const imagePreview = ref(null);
 const fileInput = ref(null);
 
 const roles = ["Admin", "Editor", "Writer", "Contributor"];
+const tagOptions = ["transportasi", "makanan", "energi", "lingkungan"];
 
 function handleImageSelect(event) {
   const file = event.target.files[0];
@@ -69,29 +72,30 @@ async function handleSubmit() {
       formData.append("highlights", form.value.highlights);
 
     await missionsStore.createMission(formData);
+    toastStore.success("Misi berhasil dibuat");
     router.push("/");
   } catch (error) {
-    // Error handled by store
+    toastStore.error(missionsStore.error || "Gagal membuat misi");
   }
 }
 </script>
 
 <template>
   <div>
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex items-center justify-between mb-6">
       <h1 class="text-2xl font-bold text-gray-900">Misi Baru</h1>
       <div class="flex gap-2">
         <button
           @click="router.push('/')"
           type="button"
-          class="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+          class="px-6 py-2 text-gray-700 transition bg-gray-200 rounded-lg dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
         >
           Batal
         </button>
         <button
           @click="handleSubmit"
           :disabled="missionsStore.loading"
-          class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+          class="px-6 py-2 text-white transition bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50"
         >
           Kirim
         </button>
@@ -102,7 +106,7 @@ async function handleSubmit() {
       <!-- Mission Title -->
       <div>
         <label
-          class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+          class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
         >
           Judul Misi<span class="text-red-500">*</span>
         </label>
@@ -111,62 +115,65 @@ async function handleSubmit() {
           type="text"
           placeholder="Ketik judul disini"
           required
-          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+          class="w-full px-4 py-3 text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded-lg outline-none dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white dark:placeholder-gray-500"
         />
       </div>
 
       <!-- Tags -->
       <div>
         <label
-          class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+          class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
         >
           Tag Misi<span class="text-red-500">*</span>
         </label>
-        <input
+        <select
           v-model="form.tags"
-          type="text"
-          placeholder="e.g. education, sustainability"
           required
-          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-        />
+          class="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg outline-none dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+        >
+          <option value="" disabled>Pilih tag misi</option>
+          <option v-for="tag in tagOptions" :key="tag" :value="tag">
+            {{ tag.charAt(0).toUpperCase() + tag.slice(1) }}
+          </option>
+        </select>
       </div>
 
       <!-- Description -->
       <div>
         <label
-          class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+          class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
           >Deskripsi</label
         >
         <textarea
           v-model="form.description"
           rows="4"
           placeholder="Masukan deskripsi misi"
-          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-y bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+          class="w-full px-4 py-3 text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded-lg outline-none resize-y dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white dark:placeholder-gray-500"
         ></textarea>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <!-- Cover Image -->
         <div>
           <label
-            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
             >Gambar Sampul</label
           >
           <div
-            class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 bg-gray-50 dark:bg-gray-800"
+            class="p-6 border-2 border-gray-300 border-dashed rounded-lg dark:border-gray-600 bg-gray-50 dark:bg-gray-800"
           >
             <div class="flex gap-2 mb-4">
               <button
                 type="button"
                 @click="$refs.fileInput.click()"
-                class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+                class="px-4 py-2 text-gray-700 transition bg-white border border-gray-300 rounded-lg dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-800 dark:text-gray-300"
               >
                 Cari
               </button>
               <button
                 type="button"
                 @click="removeImage"
-                class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                class="px-4 py-2 text-white transition bg-red-500 rounded-lg hover:bg-red-600"
               >
                 Hapus
               </button>
@@ -182,10 +189,10 @@ async function handleSubmit() {
               <img
                 :src="imagePreview"
                 alt="Preview"
-                class="max-h-48 rounded-lg"
+                class="rounded-lg max-h-48"
               />
             </div>
-            <p v-else class="text-gray-400 dark:text-gray-500 text-center">
+            <p v-else class="text-center text-gray-400 dark:text-gray-500">
               Tidak ada gambar dipilih
             </p>
           </div>
@@ -196,40 +203,40 @@ async function handleSubmit() {
           <!-- Photo Caption -->
           <div>
             <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
               >Keterangan Foto</label
             >
             <input
               v-model="form.photoCaption"
               type="text"
               placeholder="Keterangan singkat"
-              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+              class="w-full px-4 py-3 text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded-lg outline-none dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white dark:placeholder-gray-500"
             />
           </div>
 
           <!-- Author Name -->
           <div>
             <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
               >Nama Penulis</label
             >
             <input
               v-model="form.authorName"
               type="text"
               placeholder="Masukkan nama penulis"
-              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+              class="w-full px-4 py-3 text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded-lg outline-none dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white dark:placeholder-gray-500"
             />
           </div>
 
           <!-- Author Role -->
           <div>
             <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
               >Peran Penulis</label
             >
             <select
               v-model="form.authorRole"
-              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+              class="w-full px-4 py-3 text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded-lg outline-none dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white dark:placeholder-gray-500"
             >
               <option value="">Pilih peran</option>
               <option v-for="role in roles" :key="role" :value="role">
@@ -241,14 +248,14 @@ async function handleSubmit() {
           <!-- Mission Points -->
           <div>
             <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
               >Poin Misi</label
             >
             <input
               v-model="form.points"
               type="number"
               placeholder="Masukkan poin (misal: 100)"
-              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+              class="w-full px-4 py-3 text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded-lg outline-none dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white dark:placeholder-gray-500"
             />
           </div>
         </div>
@@ -257,21 +264,21 @@ async function handleSubmit() {
       <!-- Highlights -->
       <div>
         <label
-          class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+          class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
           >Sorotan</label
         >
         <textarea
           v-model="form.highlights"
           rows="4"
           placeholder="Poin-poin penting..."
-          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-y bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+          class="w-full px-4 py-3 text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded-lg outline-none resize-y dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white dark:placeholder-gray-500"
         ></textarea>
       </div>
 
       <!-- Error Message -->
       <div
         v-if="missionsStore.error"
-        class="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg"
+        class="p-4 text-red-700 bg-red-100 border border-red-400 rounded-lg"
       >
         {{ missionsStore.error }}
       </div>

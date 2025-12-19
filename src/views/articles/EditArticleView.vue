@@ -1,12 +1,15 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { useArticlesStore } from "../../stores/articles";
+import { onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import LoadingSpinner from "../../components/LoadingSpinner.vue";
 import api from "../../services/api";
+import { useArticlesStore } from "../../stores/articles";
+import { useToastStore } from "../../stores/toast";
 
 const router = useRouter();
 const route = useRoute();
 const articlesStore = useArticlesStore();
+const toastStore = useToastStore();
 
 const form = ref({
   title: "",
@@ -101,9 +104,10 @@ async function handleSubmit() {
       formData.append("highlights", form.value.highlights);
 
     await articlesStore.updateArticle(route.params.id, formData);
+    toastStore.success("Artikel berhasil diperbarui");
     router.push("/");
   } catch (error) {
-    // Error handled by store
+    toastStore.error(articlesStore.error || "Gagal memperbarui artikel");
   }
 }
 </script>
@@ -132,8 +136,8 @@ async function handleSubmit() {
       </div>
     </div>
 
-    <div v-if="loading" class="text-gray-600 dark:text-gray-400 text-center">
-      Memuat...
+    <div v-if="loading" class="py-12">
+      <LoadingSpinner size="lg" />
     </div>
 
     <form v-else @submit.prevent="handleSubmit" class="space-y-6">

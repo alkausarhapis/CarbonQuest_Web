@@ -1,7 +1,7 @@
 <script setup>
-import { RouterView } from "vue-router";
 import { watchEffect } from "vue";
-import { useRoute } from "vue-router";
+import { RouterView, useRoute } from "vue-router";
+import Toast from "./components/Toast.vue";
 import { useDarkMode } from "./composables/useDarkMode";
 
 import logoLight from "./assets/img/favicon.ico";
@@ -44,4 +44,5 @@ watchEffect(() => {
 
 <template>
   <RouterView />
+  <Toast />
 </template>
