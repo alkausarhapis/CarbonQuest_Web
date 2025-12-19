@@ -17,41 +17,139 @@ const articleSearch = ref("");
 const missionSearch = ref("");
 const quizSearch = ref("");
 
+// Sorting state for Articles
+const articleSortKey = ref("id_article");
+const articleSortOrder = ref("asc");
+
+// Sorting state for Missions
+const missionSortKey = ref("id_mission");
+const missionSortOrder = ref("asc");
+
+// Sorting state for Quizzes
+const quizSortKey = ref("id_quiz");
+const quizSortOrder = ref("asc");
+
 // Dialog state
 const showDeleteDialog = ref(false);
 const deleteTarget = ref(null);
 const deleteType = ref("");
 
+// Sort handler for articles
+function sortArticles(key) {
+  if (articleSortKey.value === key) {
+    articleSortOrder.value = articleSortOrder.value === "asc" ? "desc" : "asc";
+  } else {
+    articleSortKey.value = key;
+    articleSortOrder.value = "asc";
+  }
+}
+
+// Sort handler for missions
+function sortMissions(key) {
+  if (missionSortKey.value === key) {
+    missionSortOrder.value = missionSortOrder.value === "asc" ? "desc" : "asc";
+  } else {
+    missionSortKey.value = key;
+    missionSortOrder.value = "asc";
+  }
+}
+
+// Sort handler for quizzes
+function sortQuizzes(key) {
+  if (quizSortKey.value === key) {
+    quizSortOrder.value = quizSortOrder.value === "asc" ? "desc" : "asc";
+  } else {
+    quizSortKey.value = key;
+    quizSortOrder.value = "asc";
+  }
+}
+
+// Generic sort function
+function sortData(data, key, order) {
+  return [...data].sort((a, b) => {
+    let aVal = a[key];
+    let bVal = b[key];
+
+    // Handle nested author name
+    if (key === "author_name") {
+      aVal = a.author_name || a.author?.name || "";
+      bVal = b.author_name || b.author?.name || "";
+    }
+
+    // Handle null/undefined values
+    if (aVal == null) aVal = "";
+    if (bVal == null) bVal = "";
+
+    // Numeric comparison for IDs and points
+    if (
+      key === "id_article" ||
+      key === "id_mission" ||
+      key === "id_quiz" ||
+      key === "points" ||
+      key === "total_points" ||
+      key === "question_count"
+    ) {
+      aVal = Number(aVal) || 0;
+      bVal = Number(bVal) || 0;
+      return order === "asc" ? aVal - bVal : bVal - aVal;
+    }
+
+    // Date comparison
+    if (key === "date_created" || key === "created_at") {
+      aVal = new Date(aVal || 0).getTime();
+      bVal = new Date(bVal || 0).getTime();
+      return order === "asc" ? aVal - bVal : bVal - aVal;
+    }
+
+    // String comparison
+    aVal = String(aVal).toLowerCase();
+    bVal = String(bVal).toLowerCase();
+    if (order === "asc") {
+      return aVal.localeCompare(bVal);
+    }
+    return bVal.localeCompare(aVal);
+  });
+}
+
 const filteredArticles = computed(() => {
-  if (!articleSearch.value) return articlesStore.articles;
-  const search = articleSearch.value.toLowerCase();
-  return articlesStore.articles.filter(
-    (article) =>
-      article.title?.toLowerCase().includes(search) ||
-      article.author_name?.toLowerCase().includes(search) ||
-      article.category?.toLowerCase().includes(search)
-  );
+  let data = articlesStore.articles;
+  if (articleSearch.value) {
+    const search = articleSearch.value.toLowerCase();
+    data = data.filter(
+      (article) =>
+        article.title?.toLowerCase().includes(search) ||
+        article.author_name?.toLowerCase().includes(search) ||
+        article.category?.toLowerCase().includes(search)
+    );
+  }
+  return sortData(data, articleSortKey.value, articleSortOrder.value);
 });
 
 const filteredMissions = computed(() => {
-  if (!missionSearch.value) return missionsStore.missions;
-  const search = missionSearch.value.toLowerCase();
-  return missionsStore.missions.filter(
-    (mission) =>
-      mission.title?.toLowerCase().includes(search) ||
-      mission.author_name?.toLowerCase().includes(search) ||
-      mission.category?.toLowerCase().includes(search)
-  );
+  let data = missionsStore.missions;
+  if (missionSearch.value) {
+    const search = missionSearch.value.toLowerCase();
+    data = data.filter(
+      (mission) =>
+        mission.title?.toLowerCase().includes(search) ||
+        mission.author_name?.toLowerCase().includes(search) ||
+        mission.category?.toLowerCase().includes(search)
+    );
+  }
+  return sortData(data, missionSortKey.value, missionSortOrder.value);
 });
 
 const filteredQuizzes = computed(() => {
-  if (!quizSearch.value) return quizzesStore.quizzes;
-  const search = quizSearch.value.toLowerCase();
-  return quizzesStore.quizzes.filter(
-    (quiz) =>
-      quiz.title?.toLowerCase().includes(search) ||
-      quiz.category?.toLowerCase().includes(search)
-  );
+  let data = quizzesStore.quizzes;
+  if (quizSearch.value) {
+    const search = quizSearch.value.toLowerCase();
+    data = data.filter(
+      (quiz) =>
+        quiz.title?.toLowerCase().includes(search) ||
+        quiz.category?.toLowerCase().includes(search)
+    );
+  }
+  return sortData(data, quizSortKey.value, quizSortOrder.value);
 });
 
 onMounted(() => {
@@ -173,37 +271,91 @@ const deleteDialogMessage = computed(() => {
           <thead class="sticky top-0 bg-gray-50 dark:bg-gray-700">
             <tr>
               <th
-                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
+                @click="sortArticles('id_article')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                ID
+                <div class="flex items-center gap-1">
+                  ID
+                  <span
+                    v-if="articleSortKey === 'id_article'"
+                    class="text-blue-500"
+                  >
+                    {{ articleSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
+              </th>
+              <th
+                @click="sortArticles('title')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
+              >
+                <div class="flex items-center gap-1">
+                  Judul
+                  <span v-if="articleSortKey === 'title'" class="text-blue-500">
+                    {{ articleSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
+              </th>
+              <th
+                @click="sortArticles('author_name')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
+              >
+                <div class="flex items-center gap-1">
+                  Penulis
+                  <span
+                    v-if="articleSortKey === 'author_name'"
+                    class="text-blue-500"
+                  >
+                    {{ articleSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
+              </th>
+              <th
+                @click="sortArticles('author_role')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
+              >
+                <div class="flex items-center gap-1">
+                  Peran
+                  <span
+                    v-if="articleSortKey === 'author_role'"
+                    class="text-blue-500"
+                  >
+                    {{ articleSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
+              </th>
+              <th
+                @click="sortArticles('place')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
+              >
+                <div class="flex items-center gap-1">
+                  Tempat
+                  <span v-if="articleSortKey === 'place'" class="text-blue-500">
+                    {{ articleSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
+              </th>
+              <th
+                @click="sortArticles('date_created')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
+              >
+                <div class="flex items-center gap-1">
+                  Waktu
+                  <span
+                    v-if="articleSortKey === 'date_created'"
+                    class="text-blue-500"
+                  >
+                    {{ articleSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
                 class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
-              >
-                Judul
-              </th>
-              <th
-                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
-              >
-                Penulis
-              </th>
-              <th
-                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
-              >
-                Peran
-              </th>
-              <th
-                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
-              >
-                Tempat
-              </th>
-              <th
-                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
-              >
-                Waktu
-              </th>
-              <th
-                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase"
               >
                 Aksi
               </th>
@@ -336,34 +488,91 @@ const deleteDialogMessage = computed(() => {
           <thead class="sticky top-0 bg-gray-50 dark:bg-gray-700">
             <tr>
               <th
-                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
+                @click="sortMissions('id_mission')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                ID
+                <div class="flex items-center gap-1">
+                  ID
+                  <span
+                    v-if="missionSortKey === 'id_mission'"
+                    class="text-blue-500"
+                  >
+                    {{ missionSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
+                @click="sortMissions('title')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Judul
+                <div class="flex items-center gap-1">
+                  Judul
+                  <span v-if="missionSortKey === 'title'" class="text-blue-500">
+                    {{ missionSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
+                @click="sortMissions('author_name')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Penulis
+                <div class="flex items-center gap-1">
+                  Penulis
+                  <span
+                    v-if="missionSortKey === 'author_name'"
+                    class="text-blue-500"
+                  >
+                    {{ missionSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
+                @click="sortMissions('author_role')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Peran
+                <div class="flex items-center gap-1">
+                  Peran
+                  <span
+                    v-if="missionSortKey === 'author_role'"
+                    class="text-blue-500"
+                  >
+                    {{ missionSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
+                @click="sortMissions('points')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Poin
+                <div class="flex items-center gap-1">
+                  Poin
+                  <span
+                    v-if="missionSortKey === 'points'"
+                    class="text-blue-500"
+                  >
+                    {{ missionSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
+                @click="sortMissions('date_created')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Waktu
+                <div class="flex items-center gap-1">
+                  Waktu
+                  <span
+                    v-if="missionSortKey === 'date_created'"
+                    class="text-blue-500"
+                  >
+                    {{ missionSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
                 class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
@@ -497,34 +706,85 @@ const deleteDialogMessage = computed(() => {
           <thead class="sticky top-0 bg-gray-50 dark:bg-gray-700">
             <tr>
               <th
-                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
+                @click="sortQuizzes('id_quiz')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                ID
+                <div class="flex items-center gap-1">
+                  ID
+                  <span v-if="quizSortKey === 'id_quiz'" class="text-blue-500">
+                    {{ quizSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
+                @click="sortQuizzes('title')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Judul
+                <div class="flex items-center gap-1">
+                  Judul
+                  <span v-if="quizSortKey === 'title'" class="text-blue-500">
+                    {{ quizSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
+                @click="sortQuizzes('category')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Kategori
+                <div class="flex items-center gap-1">
+                  Kategori
+                  <span v-if="quizSortKey === 'category'" class="text-blue-500">
+                    {{ quizSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
+                @click="sortQuizzes('question_count')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Pertanyaan
+                <div class="flex items-center gap-1">
+                  Pertanyaan
+                  <span
+                    v-if="quizSortKey === 'question_count'"
+                    class="text-blue-500"
+                  >
+                    {{ quizSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
+                @click="sortQuizzes('total_points')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Total Poin
+                <div class="flex items-center gap-1">
+                  Total Poin
+                  <span
+                    v-if="quizSortKey === 'total_points'"
+                    class="text-blue-500"
+                  >
+                    {{ quizSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
+                @click="sortQuizzes('created_at')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Dibuat
+                <div class="flex items-center gap-1">
+                  Dibuat
+                  <span
+                    v-if="quizSortKey === 'created_at'"
+                    class="text-blue-500"
+                  >
+                    {{ quizSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
                 class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
