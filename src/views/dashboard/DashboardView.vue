@@ -132,7 +132,7 @@ const filteredMissions = computed(() => {
     data = data.filter(
       (mission) =>
         mission.title?.toLowerCase().includes(search) ||
-        mission.author_name?.toLowerCase().includes(search) ||
+        mission.tags?.toLowerCase().includes(search) ||
         mission.category?.toLowerCase().includes(search)
     );
   }
@@ -515,13 +515,13 @@ const deleteDialogMessage = computed(() => {
                 </div>
               </th>
               <th
-                @click="sortMissions('author_name')"
+                @click="sortMissions('tags')"
                 class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
                 <div class="flex items-center gap-1">
-                  Penulis
+                  Tag Misi
                   <span
-                    v-if="missionSortKey === 'author_name'"
+                    v-if="missionSortKey === 'tags'"
                     class="text-blue-500"
                   >
                     {{ missionSortOrder === "asc" ? "↑" : "↓" }}
@@ -613,8 +613,14 @@ const deleteDialogMessage = computed(() => {
               >
                 {{ mission.title }}
               </td>
-              <td class="px-6 py-4 text-sm text-blue-600 dark:text-blue-400">
-                {{ mission.author_name || mission.author?.name || "-" }}
+              <td class="px-6 py-4 text-sm">
+                <span
+                  v-if="mission.tags"
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200"
+                >
+                  {{ mission.tags }}
+                </span>
+                <span v-else class="text-gray-400">-</span>
               </td>
               <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                 {{ mission.author_role || "Admin" }}
