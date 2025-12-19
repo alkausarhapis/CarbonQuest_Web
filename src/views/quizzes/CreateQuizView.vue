@@ -2,9 +2,11 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useQuizzesStore } from "../../stores/quizzes";
+import { useToastStore } from "../../stores/toast";
 
 const router = useRouter();
 const quizzesStore = useQuizzesStore();
+const toastStore = useToastStore();
 
 const form = ref({
   title: "",
@@ -134,9 +136,10 @@ async function handleSubmit() {
     };
 
     await quizzesStore.createQuiz(quizData);
+    toastStore.success("Quiz berhasil dibuat");
     router.push("/");
   } catch (error) {
-    alert(error.response?.data?.message || "Gagal membuat quiz");
+    toastStore.error(error.response?.data?.message || "Gagal membuat quiz");
   }
 }
 </script>

@@ -1,11 +1,14 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import LoadingSpinner from "../../components/LoadingSpinner.vue";
 import { useQuizzesStore } from "../../stores/quizzes";
+import { useToastStore } from "../../stores/toast";
 
 const router = useRouter();
 const route = useRoute();
 const quizzesStore = useQuizzesStore();
+const toastStore = useToastStore();
 
 const loading = ref(true);
 const form = ref({
@@ -153,17 +156,18 @@ async function handleSubmit() {
     };
 
     await quizzesStore.updateQuiz(route.params.id, quizData);
+    toastStore.success("Quiz berhasil diperbarui");
     router.push("/");
   } catch (error) {
-    alert(error.response?.data?.message || "Gagal mengupdate quiz");
+    toastStore.error(error.response?.data?.message || "Gagal memperbarui quiz");
   }
 }
 </script>
 
 <template>
   <div>
-    <div v-if="loading" class="text-center py-12">
-      <div class="text-gray-600 dark:text-gray-400 text-center">Memuat...</div>
+    <div v-if="loading" class="py-12">
+      <LoadingSpinner size="lg" />
     </div>
 
     <div v-else>

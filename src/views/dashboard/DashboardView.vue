@@ -1,54 +1,155 @@
 <script setup>
-import { onMounted, ref, computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { RouterLink } from "vue-router";
+import ConfirmDialog from "../../components/ConfirmDialog.vue";
+import LoadingSpinner from "../../components/LoadingSpinner.vue";
 import { useArticlesStore } from "../../stores/articles";
 import { useMissionsStore } from "../../stores/missions";
 import { useQuizzesStore } from "../../stores/quizzes";
-import ConfirmDialog from "../../components/ConfirmDialog.vue";
+import { useToastStore } from "../../stores/toast";
 
 const articlesStore = useArticlesStore();
 const missionsStore = useMissionsStore();
 const quizzesStore = useQuizzesStore();
+const toastStore = useToastStore();
 
 const articleSearch = ref("");
 const missionSearch = ref("");
 const quizSearch = ref("");
+
+// Sorting state for Articles
+const articleSortKey = ref("id_article");
+const articleSortOrder = ref("asc");
+
+// Sorting state for Missions
+const missionSortKey = ref("id_mission");
+const missionSortOrder = ref("asc");
+
+// Sorting state for Quizzes
+const quizSortKey = ref("id_quiz");
+const quizSortOrder = ref("asc");
 
 // Dialog state
 const showDeleteDialog = ref(false);
 const deleteTarget = ref(null);
 const deleteType = ref("");
 
+// Sort handler for articles
+function sortArticles(key) {
+  if (articleSortKey.value === key) {
+    articleSortOrder.value = articleSortOrder.value === "asc" ? "desc" : "asc";
+  } else {
+    articleSortKey.value = key;
+    articleSortOrder.value = "asc";
+  }
+}
+
+// Sort handler for missions
+function sortMissions(key) {
+  if (missionSortKey.value === key) {
+    missionSortOrder.value = missionSortOrder.value === "asc" ? "desc" : "asc";
+  } else {
+    missionSortKey.value = key;
+    missionSortOrder.value = "asc";
+  }
+}
+
+// Sort handler for quizzes
+function sortQuizzes(key) {
+  if (quizSortKey.value === key) {
+    quizSortOrder.value = quizSortOrder.value === "asc" ? "desc" : "asc";
+  } else {
+    quizSortKey.value = key;
+    quizSortOrder.value = "asc";
+  }
+}
+
+// Generic sort function
+function sortData(data, key, order) {
+  return [...data].sort((a, b) => {
+    let aVal = a[key];
+    let bVal = b[key];
+
+    // Handle nested author name
+    if (key === "author_name") {
+      aVal = a.author_name || a.author?.name || "";
+      bVal = b.author_name || b.author?.name || "";
+    }
+
+    // Handle null/undefined values
+    if (aVal == null) aVal = "";
+    if (bVal == null) bVal = "";
+
+    // Numeric comparison for IDs and points
+    if (
+      key === "id_article" ||
+      key === "id_mission" ||
+      key === "id_quiz" ||
+      key === "points" ||
+      key === "total_points" ||
+      key === "question_count"
+    ) {
+      aVal = Number(aVal) || 0;
+      bVal = Number(bVal) || 0;
+      return order === "asc" ? aVal - bVal : bVal - aVal;
+    }
+
+    // Date comparison
+    if (key === "date_created" || key === "created_at") {
+      aVal = new Date(aVal || 0).getTime();
+      bVal = new Date(bVal || 0).getTime();
+      return order === "asc" ? aVal - bVal : bVal - aVal;
+    }
+
+    // String comparison
+    aVal = String(aVal).toLowerCase();
+    bVal = String(bVal).toLowerCase();
+    if (order === "asc") {
+      return aVal.localeCompare(bVal);
+    }
+    return bVal.localeCompare(aVal);
+  });
+}
+
 const filteredArticles = computed(() => {
-  if (!articleSearch.value) return articlesStore.articles;
-  const search = articleSearch.value.toLowerCase();
-  return articlesStore.articles.filter(
-    (article) =>
-      article.title?.toLowerCase().includes(search) ||
-      article.author_name?.toLowerCase().includes(search) ||
-      article.category?.toLowerCase().includes(search)
-  );
+  let data = articlesStore.articles;
+  if (articleSearch.value) {
+    const search = articleSearch.value.toLowerCase();
+    data = data.filter(
+      (article) =>
+        article.title?.toLowerCase().includes(search) ||
+        article.author_name?.toLowerCase().includes(search) ||
+        article.category?.toLowerCase().includes(search)
+    );
+  }
+  return sortData(data, articleSortKey.value, articleSortOrder.value);
 });
 
 const filteredMissions = computed(() => {
-  if (!missionSearch.value) return missionsStore.missions;
-  const search = missionSearch.value.toLowerCase();
-  return missionsStore.missions.filter(
-    (mission) =>
-      mission.title?.toLowerCase().includes(search) ||
-      mission.author_name?.toLowerCase().includes(search) ||
-      mission.category?.toLowerCase().includes(search)
-  );
+  let data = missionsStore.missions;
+  if (missionSearch.value) {
+    const search = missionSearch.value.toLowerCase();
+    data = data.filter(
+      (mission) =>
+        mission.title?.toLowerCase().includes(search) ||
+        mission.author_name?.toLowerCase().includes(search) ||
+        mission.category?.toLowerCase().includes(search)
+    );
+  }
+  return sortData(data, missionSortKey.value, missionSortOrder.value);
 });
 
 const filteredQuizzes = computed(() => {
-  if (!quizSearch.value) return quizzesStore.quizzes;
-  const search = quizSearch.value.toLowerCase();
-  return quizzesStore.quizzes.filter(
-    (quiz) =>
-      quiz.title?.toLowerCase().includes(search) ||
-      quiz.category?.toLowerCase().includes(search)
-  );
+  let data = quizzesStore.quizzes;
+  if (quizSearch.value) {
+    const search = quizSearch.value.toLowerCase();
+    data = data.filter(
+      (quiz) =>
+        quiz.title?.toLowerCase().includes(search) ||
+        quiz.category?.toLowerCase().includes(search)
+    );
+  }
+  return sortData(data, quizSortKey.value, quizSortOrder.value);
 });
 
 onMounted(() => {
@@ -88,12 +189,19 @@ function deleteQuiz(id) {
 }
 
 async function confirmDelete() {
-  if (deleteType.value === "article") {
-    await articlesStore.deleteArticle(deleteTarget.value);
-  } else if (deleteType.value === "mission") {
-    await missionsStore.deleteMission(deleteTarget.value);
-  } else if (deleteType.value === "quiz") {
-    await quizzesStore.deleteQuiz(deleteTarget.value);
+  try {
+    if (deleteType.value === "article") {
+      await articlesStore.deleteArticle(deleteTarget.value);
+      toastStore.success("Artikel berhasil dihapus");
+    } else if (deleteType.value === "mission") {
+      await missionsStore.deleteMission(deleteTarget.value);
+      toastStore.success("Misi berhasil dihapus");
+    } else if (deleteType.value === "quiz") {
+      await quizzesStore.deleteQuiz(deleteTarget.value);
+      toastStore.success("Quiz berhasil dihapus");
+    }
+  } catch (err) {
+    toastStore.error("Gagal menghapus data");
   }
   showDeleteDialog.value = false;
   // Delay clearing the state to avoid text change during animation
@@ -128,16 +236,16 @@ const deleteDialogMessage = computed(() => {
   <div class="space-y-8">
     <!-- Articles Section -->
     <div
-      class="bg-white dark:bg-gray-800 rounded-lg shadow transition-colors duration-200"
+      class="transition-colors duration-200 bg-white rounded-lg shadow dark:bg-gray-800"
     >
       <div class="p-6 border-b dark:border-gray-700">
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <h2 class="text-xl font-bold text-gray-900 dark:text-white">
             Artikel
           </h2>
           <div class="relative w-64">
             <svg
-              class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+              class="absolute w-5 h-5 text-gray-400 -translate-y-1/2 left-3 top-1/2"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -153,47 +261,101 @@ const deleteDialogMessage = computed(() => {
               v-model="articleSearch"
               type="text"
               placeholder="Cari artikel..."
-              class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-colors duration-200"
+              class="w-full py-2 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-400 transition-colors duration-200 bg-white border border-gray-300 rounded-lg outline-none dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white dark:placeholder-gray-500"
             />
           </div>
         </div>
       </div>
       <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
         <table class="w-full">
-          <thead class="bg-gray-50 dark:bg-gray-700 sticky top-0">
+          <thead class="sticky top-0 bg-gray-50 dark:bg-gray-700">
             <tr>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                @click="sortArticles('id_article')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                ID
+                <div class="flex items-center gap-1">
+                  ID
+                  <span
+                    v-if="articleSortKey === 'id_article'"
+                    class="text-blue-500"
+                  >
+                    {{ articleSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                @click="sortArticles('title')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Judul
+                <div class="flex items-center gap-1">
+                  Judul
+                  <span v-if="articleSortKey === 'title'" class="text-blue-500">
+                    {{ articleSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                @click="sortArticles('author_name')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Penulis
+                <div class="flex items-center gap-1">
+                  Penulis
+                  <span
+                    v-if="articleSortKey === 'author_name'"
+                    class="text-blue-500"
+                  >
+                    {{ articleSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                @click="sortArticles('author_role')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Peran
+                <div class="flex items-center gap-1">
+                  Peran
+                  <span
+                    v-if="articleSortKey === 'author_role'"
+                    class="text-blue-500"
+                  >
+                    {{ articleSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                @click="sortArticles('place')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Tempat
+                <div class="flex items-center gap-1">
+                  Tempat
+                  <span v-if="articleSortKey === 'place'" class="text-blue-500">
+                    {{ articleSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                @click="sortArticles('date_created')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Waktu
+                <div class="flex items-center gap-1">
+                  Waktu
+                  <span
+                    v-if="articleSortKey === 'date_created'"
+                    class="text-blue-500"
+                  >
+                    {{ articleSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 Aksi
               </th>
@@ -203,9 +365,9 @@ const deleteDialogMessage = computed(() => {
             <tr v-if="articlesStore.loading">
               <td
                 colspan="6"
-                class="px-6 py-4 text-center text-gray-500 dark:text-gray-400"
+                class="px-6 py-8 text-center text-gray-500 dark:text-gray-400"
               >
-                Memuat...
+                <LoadingSpinner size="md" />
               </td>
             </tr>
             <tr v-else-if="filteredArticles.length === 0">
@@ -223,7 +385,7 @@ const deleteDialogMessage = computed(() => {
             <tr
               v-for="article in filteredArticles"
               :key="article.id_article"
-              class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150"
+              class="transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                 {{ article.id_article }}
@@ -249,7 +411,7 @@ const deleteDialogMessage = computed(() => {
                 <div class="flex gap-2">
                   <RouterLink
                     :to="`/articles/edit/${article.id_article}`"
-                    class="p-2 text-gray-600 hover:text-blue-600 transition"
+                    class="p-2 text-gray-600 transition hover:text-blue-600"
                   >
                     <svg
                       class="w-5 h-5"
@@ -267,7 +429,7 @@ const deleteDialogMessage = computed(() => {
                   </RouterLink>
                   <button
                     @click="deleteArticle(article.id_article)"
-                    class="p-2 text-gray-600 hover:text-red-600 transition"
+                    class="p-2 text-gray-600 transition hover:text-red-600"
                   >
                     <svg
                       class="w-5 h-5"
@@ -293,14 +455,14 @@ const deleteDialogMessage = computed(() => {
 
     <!-- Missions Section -->
     <div
-      class="bg-white dark:bg-gray-800 rounded-lg shadow transition-colors duration-200"
+      class="transition-colors duration-200 bg-white rounded-lg shadow dark:bg-gray-800"
     >
       <div class="p-6 border-b dark:border-gray-700">
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <h2 class="text-xl font-bold text-gray-900 dark:text-white">Misi</h2>
           <div class="relative w-64">
             <svg
-              class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+              class="absolute w-5 h-5 text-gray-400 -translate-y-1/2 left-3 top-1/2"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -316,47 +478,104 @@ const deleteDialogMessage = computed(() => {
               v-model="missionSearch"
               type="text"
               placeholder="Cari misi..."
-              class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-colors duration-200"
+              class="w-full py-2 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-400 transition-colors duration-200 bg-white border border-gray-300 rounded-lg outline-none dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white dark:placeholder-gray-500"
             />
           </div>
         </div>
       </div>
       <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
         <table class="w-full">
-          <thead class="bg-gray-50 dark:bg-gray-700 sticky top-0">
+          <thead class="sticky top-0 bg-gray-50 dark:bg-gray-700">
             <tr>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                @click="sortMissions('id_mission')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                ID
+                <div class="flex items-center gap-1">
+                  ID
+                  <span
+                    v-if="missionSortKey === 'id_mission'"
+                    class="text-blue-500"
+                  >
+                    {{ missionSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                @click="sortMissions('title')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Judul
+                <div class="flex items-center gap-1">
+                  Judul
+                  <span v-if="missionSortKey === 'title'" class="text-blue-500">
+                    {{ missionSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                @click="sortMissions('author_name')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Penulis
+                <div class="flex items-center gap-1">
+                  Penulis
+                  <span
+                    v-if="missionSortKey === 'author_name'"
+                    class="text-blue-500"
+                  >
+                    {{ missionSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                @click="sortMissions('author_role')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Peran
+                <div class="flex items-center gap-1">
+                  Peran
+                  <span
+                    v-if="missionSortKey === 'author_role'"
+                    class="text-blue-500"
+                  >
+                    {{ missionSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                @click="sortMissions('points')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Poin
+                <div class="flex items-center gap-1">
+                  Poin
+                  <span
+                    v-if="missionSortKey === 'points'"
+                    class="text-blue-500"
+                  >
+                    {{ missionSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                @click="sortMissions('date_created')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Waktu
+                <div class="flex items-center gap-1">
+                  Waktu
+                  <span
+                    v-if="missionSortKey === 'date_created'"
+                    class="text-blue-500"
+                  >
+                    {{ missionSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 Aksi
               </th>
@@ -366,9 +585,9 @@ const deleteDialogMessage = computed(() => {
             <tr v-if="missionsStore.loading">
               <td
                 colspan="6"
-                class="px-6 py-4 text-center text-gray-500 dark:text-gray-400"
+                class="px-6 py-8 text-center text-gray-500 dark:text-gray-400"
               >
-                Memuat...
+                <LoadingSpinner size="md" />
               </td>
             </tr>
             <tr v-else-if="filteredMissions.length === 0">
@@ -384,7 +603,7 @@ const deleteDialogMessage = computed(() => {
             <tr
               v-for="mission in filteredMissions"
               :key="mission.id_mission"
-              class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150"
+              class="transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                 {{ mission.id_mission }}
@@ -410,7 +629,7 @@ const deleteDialogMessage = computed(() => {
                 <div class="flex gap-2">
                   <RouterLink
                     :to="`/missions/edit/${mission.id_mission}`"
-                    class="p-2 text-gray-600 hover:text-blue-600 transition"
+                    class="p-2 text-gray-600 transition hover:text-blue-600"
                   >
                     <svg
                       class="w-5 h-5"
@@ -428,7 +647,7 @@ const deleteDialogMessage = computed(() => {
                   </RouterLink>
                   <button
                     @click="deleteMission(mission.id_mission)"
-                    class="p-2 text-gray-600 hover:text-red-600 transition"
+                    class="p-2 text-gray-600 transition hover:text-red-600"
                   >
                     <svg
                       class="w-5 h-5"
@@ -454,14 +673,14 @@ const deleteDialogMessage = computed(() => {
 
     <!-- Quizzes Section -->
     <div
-      class="bg-white dark:bg-gray-800 rounded-lg shadow transition-colors duration-200"
+      class="transition-colors duration-200 bg-white rounded-lg shadow dark:bg-gray-800"
     >
       <div class="p-6 border-b dark:border-gray-700">
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <h2 class="text-xl font-bold text-gray-900 dark:text-white">Quiz</h2>
           <div class="relative w-64">
             <svg
-              class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+              class="absolute w-5 h-5 text-gray-400 -translate-y-1/2 left-3 top-1/2"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -477,47 +696,98 @@ const deleteDialogMessage = computed(() => {
               v-model="quizSearch"
               type="text"
               placeholder="Cari quiz..."
-              class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-colors duration-200"
+              class="w-full py-2 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-400 transition-colors duration-200 bg-white border border-gray-300 rounded-lg outline-none dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white dark:placeholder-gray-500"
             />
           </div>
         </div>
       </div>
       <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
         <table class="w-full">
-          <thead class="bg-gray-50 dark:bg-gray-700 sticky top-0">
+          <thead class="sticky top-0 bg-gray-50 dark:bg-gray-700">
             <tr>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                @click="sortQuizzes('id_quiz')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                ID
+                <div class="flex items-center gap-1">
+                  ID
+                  <span v-if="quizSortKey === 'id_quiz'" class="text-blue-500">
+                    {{ quizSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                @click="sortQuizzes('title')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Judul
+                <div class="flex items-center gap-1">
+                  Judul
+                  <span v-if="quizSortKey === 'title'" class="text-blue-500">
+                    {{ quizSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                @click="sortQuizzes('category')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Kategori
+                <div class="flex items-center gap-1">
+                  Kategori
+                  <span v-if="quizSortKey === 'category'" class="text-blue-500">
+                    {{ quizSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                @click="sortQuizzes('question_count')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Pertanyaan
+                <div class="flex items-center gap-1">
+                  Pertanyaan
+                  <span
+                    v-if="quizSortKey === 'question_count'"
+                    class="text-blue-500"
+                  >
+                    {{ quizSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                @click="sortQuizzes('total_points')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Total Poin
+                <div class="flex items-center gap-1">
+                  Total Poin
+                  <span
+                    v-if="quizSortKey === 'total_points'"
+                    class="text-blue-500"
+                  >
+                    {{ quizSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                @click="sortQuizzes('created_at')"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                Dibuat
+                <div class="flex items-center gap-1">
+                  Dibuat
+                  <span
+                    v-if="quizSortKey === 'created_at'"
+                    class="text-blue-500"
+                  >
+                    {{ quizSortOrder === "asc" ? "↑" : "↓" }}
+                  </span>
+                  <span v-else class="text-gray-400">↕</span>
+                </div>
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase"
+                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase dark:text-blue-400"
               >
                 Aksi
               </th>
@@ -527,9 +797,9 @@ const deleteDialogMessage = computed(() => {
             <tr v-if="quizzesStore.loading">
               <td
                 colspan="7"
-                class="px-6 py-4 text-center text-gray-500 dark:text-gray-400"
+                class="px-6 py-8 text-center text-gray-500 dark:text-gray-400"
               >
-                Memuat...
+                <LoadingSpinner size="md" />
               </td>
             </tr>
             <tr v-else-if="filteredQuizzes.length === 0">
@@ -545,7 +815,7 @@ const deleteDialogMessage = computed(() => {
             <tr
               v-for="quiz in filteredQuizzes"
               :key="quiz.id_quiz"
-              class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150"
+              class="transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                 {{ quiz.id_quiz }}
@@ -565,7 +835,7 @@ const deleteDialogMessage = computed(() => {
                     'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200':
                       quiz.category === 'Bulanan',
                   }"
-                  class="px-2 py-1 rounded-full text-xs font-medium"
+                  class="px-2 py-1 text-xs font-medium rounded-full"
                 >
                   {{ quiz.category }}
                 </span>
@@ -583,7 +853,7 @@ const deleteDialogMessage = computed(() => {
                 <div class="flex gap-2">
                   <RouterLink
                     :to="`/quizzes/edit/${quiz.id_quiz}`"
-                    class="p-2 text-gray-600 hover:text-blue-600 transition"
+                    class="p-2 text-gray-600 transition hover:text-blue-600"
                   >
                     <svg
                       class="w-5 h-5"
@@ -601,7 +871,7 @@ const deleteDialogMessage = computed(() => {
                   </RouterLink>
                   <button
                     @click="deleteQuiz(quiz.id_quiz)"
-                    class="p-2 text-gray-600 hover:text-red-600 transition"
+                    class="p-2 text-gray-600 transition hover:text-red-600"
                   >
                     <svg
                       class="w-5 h-5"

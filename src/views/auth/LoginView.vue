@@ -1,9 +1,10 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { useAuthStore } from "../../stores/auth";
-import { useDarkMode } from "../../composables/useDarkMode";
 import logoIcon from "../../assets/img/logo.png";
+import LoadingSpinner from "../../components/LoadingSpinner.vue";
+import { useDarkMode } from "../../composables/useDarkMode";
+import { useAuthStore } from "../../stores/auth";
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -160,9 +161,10 @@ async function handleLogin() {
           <button
             type="submit"
             :disabled="authStore.loading"
-            class="w-full px-4 py-3 font-medium text-white transition bg-gray-900 rounded-lg dark:bg-blue-600 hover:bg-gray-800 dark:hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="w-full px-4 py-3 font-medium text-white transition bg-gray-900 rounded-lg dark:bg-blue-600 hover:bg-gray-800 dark:hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            <span v-if="authStore.loading">Memuat...</span>
+            <LoadingSpinner v-if="authStore.loading" size="sm" />
+            <span v-if="authStore.loading">Memproses...</span>
             <span v-else>Masuk</span>
           </button>
         </form>
