@@ -1,23 +1,17 @@
 import axios from "axios";
 
 const api = axios.create({
-  // Gunakan proxy untuk development
   baseURL: import.meta.env.DEV
     ? "/api"
     : "https://carbonquest-api.bintangap.my.id",
-  // JANGAN set default Content-Type, biarkan Axios handle otomatis
-  // Untuk JSON akan otomatis application/json
-  // Untuk FormData akan otomatis multipart/form-data dengan boundary
 });
 
-// Request interceptor untuk menambahkan token
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    // Jangan override Content-Type jika sudah diset oleh FormData
     if (config.data instanceof FormData) {
       delete config.headers["Content-Type"];
     }
@@ -28,7 +22,6 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor untuk handle error
 api.interceptors.response.use(
   (response) => response,
   (error) => {

@@ -1,7 +1,6 @@
 import { ref, watchEffect, computed } from "vue";
 import { useRoute } from "vue-router";
 
-// Page title mapping
 const pageTitles = {
   "/": "Dashboard - CarbonQuest",
   "/login": "Login - CarbonQuest",
@@ -16,12 +15,10 @@ export function usePageTitle() {
   const route = useRoute();
 
   const pageTitle = computed(() => {
-    // Check exact path first
     if (pageTitles[route.path]) {
       return pageTitles[route.path];
     }
 
-    // Check for edit pages
     if (route.path.startsWith("/articles/edit")) {
       return "Edit Artikel - CarbonQuest";
     }
@@ -32,11 +29,9 @@ export function usePageTitle() {
       return "Edit Quiz - CarbonQuest";
     }
 
-    // Default title
     return "CarbonQuest";
   });
 
-  // Update document title when route changes
   watchEffect(() => {
     document.title = pageTitle.value;
   });

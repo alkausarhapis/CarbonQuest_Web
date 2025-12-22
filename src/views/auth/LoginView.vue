@@ -14,7 +14,6 @@ const email = ref("");
 const password = ref("");
 const showPassword = ref(false);
 
-// Clear error when user types
 function clearError() {
   if (authStore.error) {
     authStore.error = null;
@@ -23,7 +22,6 @@ function clearError() {
 }
 
 async function handleLogin() {
-  // Don't clear error here - it will be cleared when user types
   const success = await authStore.login(email.value, password.value);
   if (success) {
     router.push("/");

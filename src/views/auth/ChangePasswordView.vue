@@ -18,7 +18,6 @@ async function handleChangePassword() {
   successMessage.value = "";
   authStore.error = null;
 
-  // Validation
   if (!currentPassword.value || !newPassword.value || !confirmPassword.value) {
     authStore.error = "Semua field harus diisi.";
     return;
@@ -46,12 +45,10 @@ async function handleChangePassword() {
 
   if (success) {
     successMessage.value = "Password berhasil diubah!";
-    // Reset form
     currentPassword.value = "";
     newPassword.value = "";
     confirmPassword.value = "";
 
-    // Redirect after 2 seconds
     setTimeout(() => {
       router.push("/");
     }, 2000);
@@ -78,7 +75,6 @@ function handleCancel() {
       </div>
 
       <form @submit.prevent="handleChangePassword" class="p-6 space-y-6">
-        <!-- Current Password -->
         <div>
           <label
             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -137,7 +133,6 @@ function handleCancel() {
           </div>
         </div>
 
-        <!-- New Password -->
         <div>
           <label
             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -196,7 +191,6 @@ function handleCancel() {
           </div>
         </div>
 
-        <!-- Confirm Password -->
         <div>
           <label
             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -255,7 +249,6 @@ function handleCancel() {
           </div>
         </div>
 
-        <!-- Success Message -->
         <div
           v-if="successMessage"
           class="p-4 bg-green-100 dark:bg-green-900/30 border border-green-400 dark:border-green-800 text-green-700 dark:text-green-400 rounded-lg"
@@ -263,7 +256,6 @@ function handleCancel() {
           {{ successMessage }}
         </div>
 
-        <!-- Error Message -->
         <div
           v-if="authStore.error"
           class="p-4 bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-800 text-red-700 dark:text-red-400 rounded-lg"
@@ -271,7 +263,6 @@ function handleCancel() {
           {{ authStore.error }}
         </div>
 
-        <!-- Buttons -->
         <div class="flex gap-3">
           <button
             type="button"

@@ -47,11 +47,9 @@ onMounted(async () => {
       highlights: article.highlights || "",
     };
     if (article.cover_image) {
-      // Tampilkan existing image dari server
       imagePreview.value = `https://carbonquest-api.bintangap.my.id${article.cover_image}`;
     }
   } catch (error) {
-    // Error handled
   } finally {
     loading.value = false;
   }
@@ -81,11 +79,9 @@ async function handleSubmit() {
   try {
     const formData = new FormData();
 
-    // Required fields
     formData.append("title", form.value.title || "Untitled");
     formData.append("content", form.value.description || "No content");
 
-    // Optional fields
     if (form.value.topic) formData.append("topic", form.value.topic);
     if (form.value.description)
       formData.append("description", form.value.description);
@@ -141,7 +137,6 @@ async function handleSubmit() {
     </div>
 
     <form v-else @submit.prevent="handleSubmit" class="space-y-6">
-      <!-- Article Title -->
       <div>
         <label
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -155,7 +150,6 @@ async function handleSubmit() {
         />
       </div>
 
-      <!-- Topic -->
       <div>
         <label
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -169,7 +163,6 @@ async function handleSubmit() {
         />
       </div>
 
-      <!-- Description -->
       <div>
         <label
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -184,7 +177,6 @@ async function handleSubmit() {
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Cover Image -->
         <div>
           <label
             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -229,7 +221,6 @@ async function handleSubmit() {
           </div>
         </div>
 
-        <!-- Right Side Fields -->
         <div class="space-y-4">
           <div>
             <label
@@ -301,7 +292,6 @@ async function handleSubmit() {
         </div>
       </div>
 
-      <!-- Highlights -->
       <div>
         <label
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"

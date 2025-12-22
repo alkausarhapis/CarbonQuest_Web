@@ -28,7 +28,6 @@ export const useMissionsStore = defineStore("missions", () => {
     error.value = null;
 
     try {
-      // Axios akan otomatis set Content-Type dengan boundary
       const response = await api.post("/missions", missionData);
       await fetchMissions();
       return response.data;
@@ -45,7 +44,6 @@ export const useMissionsStore = defineStore("missions", () => {
     error.value = null;
 
     try {
-      // Axios akan otomatis set Content-Type dengan boundary
       const response = await api.put(`/missions/${id}`, missionData);
       await fetchMissions();
       return response.data;

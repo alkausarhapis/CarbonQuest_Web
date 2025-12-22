@@ -4,7 +4,6 @@ import { RouterLink, RouterView, useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";
 import { useDarkMode } from "../composables/useDarkMode";
 
-// Import icons
 import logoIcon from "../assets/img/logo.png";
 import dashboardWhiteIcon from "../assets/img/dashboard_white.png";
 import artikelWhiteIcon from "../assets/img/artikel_white.png";
@@ -72,7 +71,6 @@ function isActive(path) {
         >
       </div>
 
-      <!-- Navigation -->
       <nav class="flex-1 mt-4 overflow-y-auto">
         <RouterLink
           v-for="item in menuItems"
@@ -90,7 +88,6 @@ function isActive(path) {
         </RouterLink>
       </nav>
 
-      <!-- Logout Button -->
       <div class="flex-shrink-0 p-4 space-y-2">
         <RouterLink
           to="/change-password"
@@ -133,9 +130,7 @@ function isActive(path) {
       </div>
     </aside>
 
-    <!-- Main Content -->
     <main class="flex flex-col flex-1 overflow-hidden">
-      <!-- Header -->
       <header
         class="flex items-center justify-between flex-shrink-0 px-6 py-4 transition-colors duration-200 bg-white shadow-sm dark:bg-gray-800"
       >
@@ -148,7 +143,6 @@ function isActive(path) {
           </p>
         </div>
 
-        <!-- Dark Mode Toggle -->
         <button
           @click.stop="toggleDarkMode"
           type="button"
@@ -186,7 +180,6 @@ function isActive(path) {
         </button>
       </header>
 
-      <!-- Page Content -->
       <div class="flex-1 p-6 overflow-auto">
         <RouterView />
       </div>

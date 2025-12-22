@@ -21,16 +21,13 @@ export const useAuthStore = defineStore("auth", () => {
 
   async function login(email, password) {
     loading.value = true;
-    // Don't clear error here - let the component handle it
 
     try {
-      // Login sebagai organization (admin)
       const response = await api.post("/auth/org/login", {
         email,
         password,
       });
 
-      // Handle different response formats
       const data = response.data;
       const authToken = data.token || data.data?.token;
       const organization =
@@ -49,7 +46,6 @@ export const useAuthStore = defineStore("auth", () => {
 
       return true;
     } catch (err) {
-      // Handle rate limiting
       if (
         err.response?.status === 429 ||
         err.response?.data?.message?.includes("login attempts")
@@ -71,7 +67,6 @@ export const useAuthStore = defineStore("auth", () => {
           "Login gagal. Periksa email dan password Anda.";
       }
 
-      // Persist error to localStorage so it survives page refresh
       localStorage.setItem("loginError", error.value);
 
       return false;

@@ -37,7 +37,6 @@ const typeStyles = {
             'pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-white min-w-[280px] max-w-[400px]',
           ]"
         >
-          <!-- Icon -->
           <svg
             class="w-5 h-5 flex-shrink-0"
             fill="none"
@@ -52,10 +51,8 @@ const typeStyles = {
             />
           </svg>
 
-          <!-- Message -->
           <span class="flex-1 text-sm font-medium">{{ toast.message }}</span>
 
-          <!-- Close Button -->
           <button
             @click="toastStore.removeToast(toast.id)"
             class="flex-shrink-0 p-1 rounded-full hover:bg-white/20 transition-colors"

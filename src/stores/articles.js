@@ -29,8 +29,6 @@ export const useArticlesStore = defineStore("articles", () => {
     error.value = null;
 
     try {
-      // Axios akan otomatis set Content-Type: multipart/form-data dengan boundary
-      // JANGAN set manual karena akan hilangkan boundary yang dibutuhkan
       const response = await api.post("/articles", articleData);
 
       await fetchArticles();

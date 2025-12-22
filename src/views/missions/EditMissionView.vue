@@ -49,7 +49,6 @@ onMounted(async () => {
       imagePreview.value = `https://carbonquest-api.bintangap.my.id${mission.cover_image}`;
     }
   } catch (error) {
-    // Error handled
   } finally {
     loading.value = false;
   }
@@ -79,7 +78,6 @@ async function handleSubmit() {
   try {
     const formData = new FormData();
 
-    // Required fields
     formData.append("title", form.value.title || "Untitled");
     formData.append("desc", form.value.description || "No description");
     formData.append(
@@ -87,7 +85,6 @@ async function handleSubmit() {
       form.value.points ? form.value.points.toString() : "0"
     );
 
-    // Optional fields
     if (form.value.tags) formData.append("tags", form.value.tags);
     if (form.value.coverImageFile)
       formData.append("coverImage", form.value.coverImageFile);
@@ -136,7 +133,6 @@ async function handleSubmit() {
     </div>
 
     <form v-else @submit.prevent="handleSubmit" class="space-y-6">
-      <!-- Mission Title -->
       <div>
         <label
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -152,7 +148,6 @@ async function handleSubmit() {
         />
       </div>
 
-      <!-- Tags -->
       <div>
         <label
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -171,7 +166,6 @@ async function handleSubmit() {
         </select>
       </div>
 
-      <!-- Description -->
       <div>
         <label
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -186,7 +180,6 @@ async function handleSubmit() {
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Cover Image -->
         <div>
           <label
             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -231,7 +224,6 @@ async function handleSubmit() {
           </div>
         </div>
 
-        <!-- Right Side Fields -->
         <div class="space-y-4">
           <div>
             <label
@@ -290,7 +282,6 @@ async function handleSubmit() {
         </div>
       </div>
 
-      <!-- Highlights -->
       <div>
         <label
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
