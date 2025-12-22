@@ -17,24 +17,19 @@ const articleSearch = ref("");
 const missionSearch = ref("");
 const quizSearch = ref("");
 
-// Sorting state for Articles
 const articleSortKey = ref("id_article");
 const articleSortOrder = ref("asc");
 
-// Sorting state for Missions
 const missionSortKey = ref("id_mission");
 const missionSortOrder = ref("asc");
 
-// Sorting state for Quizzes
 const quizSortKey = ref("id_quiz");
 const quizSortOrder = ref("asc");
 
-// Dialog state
 const showDeleteDialog = ref(false);
 const deleteTarget = ref(null);
 const deleteType = ref("");
 
-// Sort handler for articles
 function sortArticles(key) {
   if (articleSortKey.value === key) {
     articleSortOrder.value = articleSortOrder.value === "asc" ? "desc" : "asc";
@@ -44,7 +39,6 @@ function sortArticles(key) {
   }
 }
 
-// Sort handler for missions
 function sortMissions(key) {
   if (missionSortKey.value === key) {
     missionSortOrder.value = missionSortOrder.value === "asc" ? "desc" : "asc";
@@ -54,7 +48,6 @@ function sortMissions(key) {
   }
 }
 
-// Sort handler for quizzes
 function sortQuizzes(key) {
   if (quizSortKey.value === key) {
     quizSortOrder.value = quizSortOrder.value === "asc" ? "desc" : "asc";
@@ -64,23 +57,19 @@ function sortQuizzes(key) {
   }
 }
 
-// Generic sort function
 function sortData(data, key, order) {
   return [...data].sort((a, b) => {
     let aVal = a[key];
     let bVal = b[key];
 
-    // Handle nested author name
     if (key === "author_name") {
       aVal = a.author_name || a.author?.name || "";
       bVal = b.author_name || b.author?.name || "";
     }
 
-    // Handle null/undefined values
     if (aVal == null) aVal = "";
     if (bVal == null) bVal = "";
 
-    // Numeric comparison for IDs and points
     if (
       key === "id_article" ||
       key === "id_mission" ||
@@ -94,14 +83,12 @@ function sortData(data, key, order) {
       return order === "asc" ? aVal - bVal : bVal - aVal;
     }
 
-    // Date comparison
     if (key === "date_created" || key === "created_at") {
       aVal = new Date(aVal || 0).getTime();
       bVal = new Date(bVal || 0).getTime();
       return order === "asc" ? aVal - bVal : bVal - aVal;
     }
 
-    // String comparison
     aVal = String(aVal).toLowerCase();
     bVal = String(bVal).toLowerCase();
     if (order === "asc") {
@@ -204,7 +191,6 @@ async function confirmDelete() {
     toastStore.error("Gagal menghapus data");
   }
   showDeleteDialog.value = false;
-  // Delay clearing the state to avoid text change during animation
   setTimeout(() => {
     deleteTarget.value = null;
     deleteType.value = "";
@@ -213,7 +199,6 @@ async function confirmDelete() {
 
 function cancelDelete() {
   showDeleteDialog.value = false;
-  // Delay clearing the state to avoid text change during animation
   setTimeout(() => {
     deleteTarget.value = null;
     deleteType.value = "";
@@ -234,7 +219,6 @@ const deleteDialogMessage = computed(() => {
 
 <template>
   <div class="space-y-8">
-    <!-- Articles Section -->
     <div
       class="transition-colors duration-200 bg-white rounded-lg shadow dark:bg-gray-800"
     >
@@ -453,7 +437,6 @@ const deleteDialogMessage = computed(() => {
       </div>
     </div>
 
-    <!-- Missions Section -->
     <div
       class="transition-colors duration-200 bg-white rounded-lg shadow dark:bg-gray-800"
     >
@@ -677,7 +660,6 @@ const deleteDialogMessage = computed(() => {
       </div>
     </div>
 
-    <!-- Quizzes Section -->
     <div
       class="transition-colors duration-200 bg-white rounded-lg shadow dark:bg-gray-800"
     >
@@ -763,21 +745,6 @@ const deleteDialogMessage = computed(() => {
                 </div>
               </th>
               <th
-                @click="sortQuizzes('total_points')"
-                class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
-              >
-                <div class="flex items-center gap-1">
-                  Total Poin
-                  <span
-                    v-if="quizSortKey === 'total_points'"
-                    class="text-blue-500"
-                  >
-                    {{ quizSortOrder === "asc" ? "↑" : "↓" }}
-                  </span>
-                  <span v-else class="text-gray-400">↕</span>
-                </div>
-              </th>
-              <th
                 @click="sortQuizzes('created_at')"
                 class="px-6 py-3 text-xs font-medium text-left text-blue-600 uppercase transition-colors cursor-pointer select-none dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
@@ -802,7 +769,7 @@ const deleteDialogMessage = computed(() => {
           <tbody class="divide-y divide-gray-200">
             <tr v-if="quizzesStore.loading">
               <td
-                colspan="7"
+                colspan="6"
                 class="px-6 py-8 text-center text-gray-500 dark:text-gray-400"
               >
                 <LoadingSpinner size="md" />
@@ -810,7 +777,7 @@ const deleteDialogMessage = computed(() => {
             </tr>
             <tr v-else-if="filteredQuizzes.length === 0">
               <td
-                colspan="7"
+                colspan="6"
                 class="px-6 py-4 text-center text-gray-500 dark:text-gray-400"
               >
                 {{
@@ -848,9 +815,6 @@ const deleteDialogMessage = computed(() => {
               </td>
               <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                 {{ quiz.question_count || quiz.questions?.length || 0 }} soal
-              </td>
-              <td class="px-6 py-4 text-sm text-cyan-600 dark:text-cyan-400">
-                {{ quiz.total_points || 0 }} pts
               </td>
               <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                 {{ formatDate(quiz.created_at) }}
@@ -901,7 +865,6 @@ const deleteDialogMessage = computed(() => {
       </div>
     </div>
 
-    <!-- Confirm Delete Dialog -->
     <ConfirmDialog
       :show="showDeleteDialog"
       :title="deleteDialogTitle"

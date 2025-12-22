@@ -14,7 +14,6 @@ const loading = ref(true);
 const form = ref({
   title: "",
   category: "Harian",
-  totalPoints: 0,
   questions: [],
 });
 
@@ -28,16 +27,13 @@ onMounted(async () => {
     if (quiz) {
       form.value.title = quiz.title;
       form.value.category = quiz.category;
-      form.value.totalPoints = quiz.total_points || 0;
 
-      // Map questions with answers
       form.value.questions = quiz.questions.map((q) => ({
         content: q.content,
-        points: q.points,
         order: q.order,
         answers: q.answers.map((a) => ({
           content: a.content,
-          isCorrect: a.is_correct,
+          points: a.points || 0,
         })),
       }));
     }
@@ -52,13 +48,9 @@ onMounted(async () => {
 function addQuestion() {
   form.value.questions.push({
     content: "",
-    points: 10,
     order: form.value.questions.length + 1,
     answers: [
-      { content: "", isCorrect: true },
-      { content: "", isCorrect: false },
-      { content: "", isCorrect: false },
-      { content: "", isCorrect: false },
+      { content: "", points: 0 },
     ],
   });
 }
@@ -66,7 +58,6 @@ function addQuestion() {
 function removeQuestion(index) {
   if (form.value.questions.length > 1) {
     form.value.questions.splice(index, 1);
-    // Update order numbers
     form.value.questions.forEach((q, i) => {
       q.order = i + 1;
     });
@@ -76,37 +67,19 @@ function removeQuestion(index) {
 function addAnswer(questionIndex) {
   form.value.questions[questionIndex].answers.push({
     content: "",
-    isCorrect: false,
+    points: 0,
   });
 }
 
 function removeAnswer(questionIndex, answerIndex) {
   const question = form.value.questions[questionIndex];
-  if (question.answers.length > 2) {
+  if (question.answers.length > 1) {
     question.answers.splice(answerIndex, 1);
   }
 }
 
-function setCorrectAnswer(questionIndex, answerIndex) {
-  // Set all answers to false, then set selected one to true
-  form.value.questions[questionIndex].answers.forEach((answer, i) => {
-    answer.isCorrect = i === answerIndex;
-  });
-}
-
-function calculateTotalPoints() {
-  form.value.totalPoints = form.value.questions.reduce(
-    (sum, q) => sum + (parseInt(q.points) || 0),
-    0
-  );
-}
-
 async function handleSubmit() {
   try {
-    // Calculate total points
-    calculateTotalPoints();
-
-    // Validate
     if (!form.value.title) {
       alert("Judul quiz harus diisi!");
       return;
@@ -117,17 +90,10 @@ async function handleSubmit() {
       return;
     }
 
-    // Validate each question
     for (let i = 0; i < form.value.questions.length; i++) {
       const q = form.value.questions[i];
       if (!q.content) {
         alert(`Pertanyaan ${i + 1} harus diisi!`);
-        return;
-      }
-
-      const hasCorrectAnswer = q.answers.some((a) => a.isCorrect);
-      if (!hasCorrectAnswer) {
-        alert(`Pertanyaan ${i + 1} harus memiliki jawaban yang benar!`);
         return;
       }
 
@@ -141,16 +107,14 @@ async function handleSubmit() {
     const quizData = {
       title: form.value.title,
       category: form.value.category,
-      total_points: form.value.totalPoints,
       questions: form.value.questions.map((q) => ({
         content: q.content,
-        points: q.points,
         order: q.order,
         answers: q.answers
           .filter((a) => a.content.trim()) // Only include non-empty answers
           .map((a) => ({
             content: a.content,
-            is_correct: a.isCorrect,
+            points: parseInt(a.points) || 0,
           })),
       })),
     };
@@ -194,7 +158,6 @@ async function handleSubmit() {
       </div>
 
       <form @submit.prevent="handleSubmit" class="space-y-6">
-        <!-- Quiz Basic Info -->
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-4">
           <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
             Informasi Quiz
@@ -230,26 +193,8 @@ async function handleSubmit() {
               </option>
             </select>
           </div>
-
-          <div>
-            <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-            >
-              Total Points
-            </label>
-            <input
-              :value="form.totalPoints"
-              type="number"
-              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
-              readonly
-            />
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Total points dihitung otomatis dari semua pertanyaan
-            </p>
-          </div>
         </div>
 
-        <!-- Questions -->
         <div class="space-y-4">
           <div class="flex justify-between items-center">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -269,15 +214,15 @@ async function handleSubmit() {
             :key="qIndex"
             class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-4"
           >
-            <div class="flex justify-between items-start">
-              <h3 class="text-md font-semibold text-gray-900 dark:text-white">
+            <div class="flex justify-between items-center">
+              <h3 class="font-semibold text-gray-900 dark:text-white">
                 Pertanyaan {{ qIndex + 1 }}
               </h3>
               <button
                 v-if="form.questions.length > 1"
                 type="button"
                 @click="removeQuestion(qIndex)"
-                class="text-red-600 hover:text-red-800"
+                class="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition"
               >
                 Hapus
               </button>
@@ -299,30 +244,12 @@ async function handleSubmit() {
               ></textarea>
             </div>
 
-            <div>
-              <label
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
-                Points
-              </label>
-              <input
-                v-model.number="question.points"
-                type="number"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                placeholder="10"
-                min="1"
-                required
-                @input="calculateTotalPoints"
-              />
-            </div>
-
-            <!-- Answers -->
             <div class="space-y-3">
               <div class="flex justify-between items-center">
                 <label
                   class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                 >
-                  Jawaban (Pilih jawaban yang benar)
+                  Jawaban (dengan poin masing-masing)
                 </label>
                 <button
                   type="button"
@@ -336,42 +263,38 @@ async function handleSubmit() {
               <div
                 v-for="(answer, aIndex) in question.answers"
                 :key="aIndex"
-                class="flex gap-2 items-start"
+                class="flex gap-2 items-end"
               >
-                <input
-                  type="radio"
-                  :name="`correct-${qIndex}`"
-                  :checked="answer.isCorrect"
-                  @change="setCorrectAnswer(qIndex, aIndex)"
-                  class="mt-3 w-4 h-4 text-blue-600"
-                />
-                <input
-                  v-model="answer.content"
-                  type="text"
-                  class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-                  :placeholder="`Jawaban ${aIndex + 1}`"
-                />
+                <div class="flex-1">
+                  <input
+                    v-model="answer.content"
+                    type="text"
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                    :placeholder="`Jawaban ${aIndex + 1}`"
+                  />
+                </div>
+                <div class="flex flex-col items-start gap-1">
+                  <span class="text-sm text-gray-500 dark:text-gray-400">Poin</span>
+                  <input
+                    v-model.number="answer.points"
+                    type="number"
+                    min="0"
+                    class="w-20 px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-center"
+                    placeholder="0"
+                  />
+                </div>
                 <button
-                  v-if="question.answers.length > 2"
+                  v-if="question.answers.length > 1"
                   type="button"
                   @click="removeAnswer(qIndex, aIndex)"
-                  class="px-3 py-2 text-red-600 hover:text-red-800"
+                  class="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
                 >
-                  <svg
-                    class="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                    />
-                  </svg>
+                  Hapus
                 </button>
               </div>
+              <p class="text-sm text-gray-500 dark:text-gray-400">
+                Setiap jawaban memiliki poin tersendiri. Poin tertinggi biasanya untuk jawaban terbaik.
+              </p>
             </div>
           </div>
         </div>

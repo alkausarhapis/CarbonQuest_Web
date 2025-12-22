@@ -11,17 +11,12 @@ const toastStore = useToastStore();
 const form = ref({
   title: "",
   category: "Harian",
-  totalPoints: 0,
   questions: [
     {
       content: "",
-      points: 10,
       order: 1,
       answers: [
-        { content: "", isCorrect: true },
-        { content: "", isCorrect: false },
-        { content: "", isCorrect: false },
-        { content: "", isCorrect: false },
+        { content: "", points: 0 },
       ],
     },
   ],
@@ -32,13 +27,9 @@ const categories = ["Harian", "Mingguan", "Bulanan"];
 function addQuestion() {
   form.value.questions.push({
     content: "",
-    points: 10,
     order: form.value.questions.length + 1,
     answers: [
-      { content: "", isCorrect: true },
-      { content: "", isCorrect: false },
-      { content: "", isCorrect: false },
-      { content: "", isCorrect: false },
+      { content: "", points: 0 },
     ],
   });
 }
@@ -46,7 +37,6 @@ function addQuestion() {
 function removeQuestion(index) {
   if (form.value.questions.length > 1) {
     form.value.questions.splice(index, 1);
-    // Update order numbers
     form.value.questions.forEach((q, i) => {
       q.order = i + 1;
     });
@@ -56,37 +46,19 @@ function removeQuestion(index) {
 function addAnswer(questionIndex) {
   form.value.questions[questionIndex].answers.push({
     content: "",
-    isCorrect: false,
+    points: 0,
   });
 }
 
 function removeAnswer(questionIndex, answerIndex) {
   const question = form.value.questions[questionIndex];
-  if (question.answers.length > 2) {
+  if (question.answers.length > 1) {
     question.answers.splice(answerIndex, 1);
   }
 }
 
-function setCorrectAnswer(questionIndex, answerIndex) {
-  // Set all answers to false, then set selected one to true
-  form.value.questions[questionIndex].answers.forEach((answer, i) => {
-    answer.isCorrect = i === answerIndex;
-  });
-}
-
-function calculateTotalPoints() {
-  form.value.totalPoints = form.value.questions.reduce(
-    (sum, q) => sum + (parseInt(q.points) || 0),
-    0
-  );
-}
-
 async function handleSubmit() {
   try {
-    // Calculate total points
-    calculateTotalPoints();
-
-    // Validate
     if (!form.value.title) {
       alert("Judul quiz harus diisi!");
       return;
@@ -97,17 +69,10 @@ async function handleSubmit() {
       return;
     }
 
-    // Validate each question
     for (let i = 0; i < form.value.questions.length; i++) {
       const q = form.value.questions[i];
       if (!q.content) {
         alert(`Pertanyaan ${i + 1} harus diisi!`);
-        return;
-      }
-
-      const hasCorrectAnswer = q.answers.some((a) => a.isCorrect);
-      if (!hasCorrectAnswer) {
-        alert(`Pertanyaan ${i + 1} harus memiliki jawaban yang benar!`);
         return;
       }
 
@@ -121,16 +86,14 @@ async function handleSubmit() {
     const quizData = {
       title: form.value.title,
       category: form.value.category,
-      total_points: form.value.totalPoints,
       questions: form.value.questions.map((q) => ({
         content: q.content,
-        points: q.points,
         order: q.order,
         answers: q.answers
-          .filter((a) => a.content.trim()) // Only include non-empty answers
+          .filter((a) => a.content.trim())
           .map((a) => ({
             content: a.content,
-            is_correct: a.isCorrect,
+            points: parseInt(a.points) || 0,
           })),
       })),
     };
@@ -169,13 +132,11 @@ async function handleSubmit() {
     </div>
 
     <form @submit.prevent="handleSubmit" class="space-y-6">
-      <!-- Quiz Info -->
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-4">
         <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
           Informasi Quiz
         </h2>
 
-        <!-- Title -->
         <div>
           <label
             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -190,7 +151,6 @@ async function handleSubmit() {
           />
         </div>
 
-        <!-- Category -->
         <div>
           <label
             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -205,28 +165,8 @@ async function handleSubmit() {
             </option>
           </select>
         </div>
-
-        <!-- Total Points (Auto-calculated) -->
-        <div>
-          <label
-            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-            >Total Points (otomatis)</label
-          >
-          <input
-            :value="
-              form.questions.reduce(
-                (sum, q) => sum + (parseInt(q.points) || 0),
-                0
-              )
-            "
-            type="number"
-            disabled
-            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
-          />
-        </div>
       </div>
 
-      <!-- Questions -->
       <div class="space-y-4">
         <div class="flex justify-between items-center">
           <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -260,7 +200,6 @@ async function handleSubmit() {
             </button>
           </div>
 
-          <!-- Question Content -->
           <div>
             <label
               class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -275,21 +214,6 @@ async function handleSubmit() {
             ></textarea>
           </div>
 
-          <!-- Question Points -->
-          <div>
-            <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >Poin untuk pertanyaan ini</label
-            >
-            <input
-              v-model.number="question.points"
-              type="number"
-              min="1"
-              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-            />
-          </div>
-
-          <!-- Answers -->
           <div class="space-y-3">
             <div class="flex justify-between items-center">
               <label
@@ -308,24 +232,28 @@ async function handleSubmit() {
             <div
               v-for="(answer, aIndex) in question.answers"
               :key="aIndex"
-              class="flex gap-2 items-center"
+              class="flex gap-2 items-end"
             >
-              <input
-                type="radio"
-                :name="`correct-${qIndex}`"
-                :checked="answer.isCorrect"
-                @change="setCorrectAnswer(qIndex, aIndex)"
-                class="w-5 h-5 text-green-600"
-                title="Tandai sebagai jawaban benar"
-              />
-              <input
-                v-model="answer.content"
-                type="text"
-                placeholder="Tuliskan jawaban..."
-                class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-              />
+              <div class="flex-1">
+                <input
+                  v-model="answer.content"
+                  type="text"
+                  placeholder="Tuliskan jawaban..."
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                />
+              </div>
+              <div class="flex flex-col items-start gap-1">
+                <span class="text-sm text-gray-500 dark:text-gray-400">Poin</span>
+                <input
+                  v-model.number="answer.points"
+                  type="number"
+                  min="0"
+                  class="w-20 px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-center"
+                  placeholder="0"
+                />
+              </div>
               <button
-                v-if="question.answers.length > 2"
+                v-if="question.answers.length > 1"
                 type="button"
                 @click="removeAnswer(qIndex, aIndex)"
                 class="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
@@ -334,13 +262,12 @@ async function handleSubmit() {
               </button>
             </div>
             <p class="text-sm text-gray-500 dark:text-gray-400">
-              Klik radio button untuk menandai jawaban yang benar
+              Setiap jawaban memiliki poin tersendiri. Poin tertinggi biasanya untuk jawaban terbaik.
             </p>
           </div>
         </div>
       </div>
 
-      <!-- Submit Button (bottom) -->
       <div class="flex justify-end gap-3">
         <button
           type="button"
