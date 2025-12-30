@@ -42,7 +42,7 @@ export const useAuthStore = defineStore("auth", () => {
 
       localStorage.setItem("token", authToken);
       localStorage.setItem("user", JSON.stringify(organization));
-      localStorage.removeItem("loginError"); // Clear error on success
+      localStorage.removeItem("loginError");
 
       return true;
     } catch (err) {

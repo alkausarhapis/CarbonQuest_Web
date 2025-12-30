@@ -111,7 +111,7 @@ async function handleSubmit() {
         content: q.content,
         order: q.order,
         answers: q.answers
-          .filter((a) => a.content.trim()) // Only include non-empty answers
+          .filter((a) => a.content.trim())
           .map((a) => ({
             content: a.content,
             points: parseInt(a.points) || 0,

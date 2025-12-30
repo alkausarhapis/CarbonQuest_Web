@@ -17,7 +17,7 @@ const showPassword = ref(false);
 function clearError() {
   if (authStore.error) {
     authStore.error = null;
-    localStorage.removeItem("loginError"); // Also clear from localStorage
+    localStorage.removeItem("loginError");
   }
 }
 

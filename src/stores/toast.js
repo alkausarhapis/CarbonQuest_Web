@@ -10,7 +10,7 @@ export const useToastStore = defineStore("toast", () => {
     toasts.value.push({
       id,
       message,
-      type, // 'success' | 'error' | 'warning' | 'info'
+      type,
     });
 
     setTimeout(() => {
