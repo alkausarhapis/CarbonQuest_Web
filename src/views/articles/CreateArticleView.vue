@@ -30,7 +30,6 @@ function handleImageSelect(event) {
   const file = event.target.files[0];
   if (file) {
     form.value.coverImageFile = file;
-    // Create preview
     const reader = new FileReader();
     reader.onload = (e) => {
       imagePreview.value = e.target.result;
@@ -51,11 +50,9 @@ async function handleSubmit() {
   try {
     const formData = new FormData();
 
-    // Required fields
     formData.append("title", form.value.title || "Untitled");
     formData.append("content", form.value.description || "No content");
 
-    // Optional fields - gunakan camelCase sesuai API
     if (form.value.topic) formData.append("topic", form.value.topic);
     if (form.value.description)
       formData.append("description", form.value.description);
@@ -110,7 +107,6 @@ async function handleSubmit() {
     </div>
 
     <form @submit.prevent="handleSubmit" class="space-y-6">
-      <!-- Article Title -->
       <div>
         <label
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -124,7 +120,6 @@ async function handleSubmit() {
         />
       </div>
 
-      <!-- Topic -->
       <div>
         <label
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -138,7 +133,6 @@ async function handleSubmit() {
         />
       </div>
 
-      <!-- Description -->
       <div>
         <label
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -153,7 +147,6 @@ async function handleSubmit() {
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Cover Image -->
         <div>
           <label
             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -198,9 +191,7 @@ async function handleSubmit() {
           </div>
         </div>
 
-        <!-- Right Side Fields -->
         <div class="space-y-4">
-          <!-- Photo Caption -->
           <div>
             <label
               class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -214,7 +205,6 @@ async function handleSubmit() {
             />
           </div>
 
-          <!-- Photo Credit -->
           <div>
             <label
               class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -228,7 +218,6 @@ async function handleSubmit() {
             />
           </div>
 
-          <!-- Author Name -->
           <div>
             <label
               class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -242,7 +231,6 @@ async function handleSubmit() {
             />
           </div>
 
-          <!-- Author Role -->
           <div>
             <label
               class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -259,7 +247,6 @@ async function handleSubmit() {
             </select>
           </div>
 
-          <!-- Place -->
           <div>
             <label
               class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -275,7 +262,6 @@ async function handleSubmit() {
         </div>
       </div>
 
-      <!-- Highlights -->
       <div>
         <label
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -289,7 +275,6 @@ async function handleSubmit() {
         ></textarea>
       </div>
 
-      <!-- Error Message -->
       <div
         v-if="articlesStore.error"
         class="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg"

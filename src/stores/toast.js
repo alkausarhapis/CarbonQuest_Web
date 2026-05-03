@@ -10,10 +10,9 @@ export const useToastStore = defineStore("toast", () => {
     toasts.value.push({
       id,
       message,
-      type, // 'success' | 'error' | 'warning' | 'info'
+      type,
     });
 
-    // Auto-remove after duration
     setTimeout(() => {
       removeToast(id);
     }, duration);
@@ -28,7 +27,6 @@ export const useToastStore = defineStore("toast", () => {
     }
   }
 
-  // Convenience methods
   function success(message, duration = 3000) {
     return showToast(message, "success", duration);
   }

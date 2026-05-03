@@ -2,7 +2,7 @@
 defineProps({
   size: {
     type: String,
-    default: "md", // sm, md, lg
+    default: "md",
   },
   text: {
     type: String,

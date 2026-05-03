@@ -1,3 +1,4 @@
+
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
@@ -50,7 +51,6 @@ async function handleSubmit() {
   try {
     const formData = new FormData();
 
-    // Required fields
     formData.append("title", form.value.title || "Untitled");
     formData.append("desc", form.value.description || "No description");
     formData.append(
@@ -58,7 +58,6 @@ async function handleSubmit() {
       form.value.points ? form.value.points.toString() : "0"
     );
 
-    // Optional fields - gunakan camelCase sesuai API
     if (form.value.tags) formData.append("tags", form.value.tags);
     if (form.value.coverImageFile)
       formData.append("coverImage", form.value.coverImageFile);
@@ -103,7 +102,6 @@ async function handleSubmit() {
     </div>
 
     <form @submit.prevent="handleSubmit" class="space-y-6">
-      <!-- Mission Title -->
       <div>
         <label
           class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -119,7 +117,6 @@ async function handleSubmit() {
         />
       </div>
 
-      <!-- Tags -->
       <div>
         <label
           class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -138,7 +135,6 @@ async function handleSubmit() {
         </select>
       </div>
 
-      <!-- Description -->
       <div>
         <label
           class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -153,7 +149,6 @@ async function handleSubmit() {
       </div>
 
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <!-- Cover Image -->
         <div>
           <label
             class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -198,9 +193,7 @@ async function handleSubmit() {
           </div>
         </div>
 
-        <!-- Right Side Fields -->
         <div class="space-y-4">
-          <!-- Photo Caption -->
           <div>
             <label
               class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -214,7 +207,6 @@ async function handleSubmit() {
             />
           </div>
 
-          <!-- Author Name -->
           <div>
             <label
               class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -228,7 +220,6 @@ async function handleSubmit() {
             />
           </div>
 
-          <!-- Author Role -->
           <div>
             <label
               class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -245,7 +236,6 @@ async function handleSubmit() {
             </select>
           </div>
 
-          <!-- Mission Points -->
           <div>
             <label
               class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -261,7 +251,6 @@ async function handleSubmit() {
         </div>
       </div>
 
-      <!-- Highlights -->
       <div>
         <label
           class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -275,7 +264,6 @@ async function handleSubmit() {
         ></textarea>
       </div>
 
-      <!-- Error Message -->
       <div
         v-if="missionsStore.error"
         class="p-4 text-red-700 bg-red-100 border border-red-400 rounded-lg"

@@ -39,7 +39,6 @@ function handleCancel() {
         class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transition-colors duration-200"
         @click.stop
       >
-        <!-- Icon -->
         <div class="flex justify-center pt-8 pb-4">
           <div
             class="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center transition-colors duration-200"
@@ -60,7 +59,6 @@ function handleCancel() {
           </div>
         </div>
 
-        <!-- Content -->
         <div class="px-8 pb-6">
           <h2
             class="text-2xl font-bold text-gray-900 dark:text-white text-center mb-3"
@@ -75,7 +73,6 @@ function handleCancel() {
           </p>
         </div>
 
-        <!-- Buttons -->
         <div class="flex gap-3 px-8 pb-8">
           <button
             @click="handleCancel"
