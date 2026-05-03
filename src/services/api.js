@@ -1,10 +1,10 @@
 import axios from "axios";
 
 const api = axios.create({
-  // Gunakan proxy untuk development
+  // Gunakan environment variable untuk production, proxy untuk development
   baseURL: import.meta.env.DEV
     ? "/api"
-    : "https://carbonquest-api.bintangap.my.id",
+    : import.meta.env.VITE_API_URL || "https://carbonquest-api.bintangap.my.id",
   // JANGAN set default Content-Type, biarkan Axios handle otomatis
   // Untuk JSON akan otomatis application/json
   // Untuk FormData akan otomatis multipart/form-data dengan boundary

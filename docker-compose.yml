@@ -4,25 +4,38 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      platforms:
+        - linux/arm64
+      args:
+        - VITE_API_URL=${VITE_API_URL:-https://carbonquest-api.bintangap.my.id}
     container_name: carbonquest-web
     restart: unless-stopped
+    platform: linux/arm64
     networks:
       - carbonquest-network
     expose:
       - "80"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   # Cloudflare Tunnel
   cloudflared:
     image: cloudflare/cloudflared:latest
     container_name: cloudflared-tunnel
+    platform: linux/arm64
     restart: unless-stopped
     command: tunnel --no-autoupdate run
     environment:
-      - TUNNEL_TOKEN=eyJhIjoiMWE0YTM1MGQ3M2EyYTQ5ZmNjNjdhMmE0NDc4Zjk1NDAiLCJ0IjoiZjJiMzQ5MmMtNWRjOS00Y2I3LWEzOWItODkwMjgwZDI3YWIxIiwicyI6Ik5EWTRaVFkwTjJVdE16TXdNaTAwTW1Zd0xUaGlabVV0TVRRMk1EYzVNMkpoWmprMiJ9
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
     networks:
       - carbonquest-network
     depends_on:
-      - carbonquest-web
+      carbonquest-web:
+        condition: service_healthy
 
 networks:
   carbonquest-network:
