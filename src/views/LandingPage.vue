@@ -28,16 +28,16 @@ const navLinks = [
 </script>
 
 <template>
-  <div class="min-h-screen bg-brand-background font-brandBody text-brand-dark">
+  <div class="min-h-screen bg-background font-body text-dark">
     <MarketingNavbar
       brand="CarbonQuest"
       :menu-items="menuItems"
-      :cta="{ label: 'Start Journey', href: 'https://drive.google.com/drive/folders/1jFhOWbdc7BVrS3xr8qWJn1KzOh6Z8_26' }"
+      :cta="{ label: 'Start Journey', href: '/dashboard' }"
       :secondary-cta="{ label: 'Explore Features', href: '#features' }"
     />
 
     <HeroSection
-      :primary-cta="{ label: 'Start Journey', href: 'https://drive.google.com/drive/folders/1jFhOWbdc7BVrS3xr8qWJn1KzOh6Z8_26' }"
+      :primary-cta="{ label: 'Start Journey', href: '/dashboard' }"
       :secondary-cta="{ label: 'Explore Features', href: '#features' }"
     />
     <FeaturesSection />
@@ -52,10 +52,9 @@ const navLinks = [
       brand="CarbonQuest"
       :nav-links="navLinks"
       :resource-links="[
-        { label: 'Dashboard', href: '/' },
-        { label: 'Articles', href: '/articles' },
-        { label: 'Missions', href: '/missions' },
-        { label: 'Quizzes', href: '/quizzes/create' },
+        { label: 'Calculator', href: '/calculator' },
+        { label: 'Dashboard', href: '/dashboard' },
+        { label: 'Quizzes', href: '/quizzes' },
       ]"
     />
   </div>
