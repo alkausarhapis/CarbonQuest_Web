@@ -1,4 +1,6 @@
 <script setup>
+import logoSrc from "../../assets/img/logo.png";
+
 const props = defineProps({
   brand: {
     type: String,
@@ -7,23 +9,23 @@ const props = defineProps({
   description: {
     type: String,
     default:
-      "Measure your footprint, complete missions, and turn daily habits into climate impact.",
+      "Ukur jejak karbonmu, selesaikan misi, dan ubah kebiasaan harian menjadi dampak iklim.",
   },
   navLinks: {
     type: Array,
     default: () => [
-      { label: "Features", href: "#features" },
-      { label: "Missions", href: "#missions" },
-      { label: "Articles", href: "#articles" },
-      { label: "Leaderboard", href: "#leaderboard" },
+      { label: "Fitur", href: "#features" },
+      { label: "Misi", href: "#missions" },
+      { label: "Artikel", href: "#articles" },
+      { label: "Peringkat", href: "#leaderboard" },
     ],
   },
   resourceLinks: {
     type: Array,
     default: () => [
-      { label: "Calculator", href: "/calculator" },
-      { label: "Quizzes", href: "/quizzes" },
-      { label: "Dashboard", href: "/dashboard" },
+      { label: "Kalkulator", href: "/calculator" },
+      { label: "Kuis", href: "/quizzes" },
+      { label: "Dasbor", href: "/dashboard" },
     ],
   },
   socialLinks: {
@@ -36,19 +38,21 @@ const props = defineProps({
   },
   copyright: {
     type: String,
-    default: "2026 CarbonQuest. All rights reserved.",
+    default: "2026 CarbonQuest. Semua hak dilindungi.",
   },
 });
 </script>
 
 <template>
-  <footer class="bg-brand-dark text-white">
+  <footer class="bg-brand-secondary text-white">
     <div class="mx-auto grid max-w-6xl gap-10 px-6 py-16 lg:grid-cols-[1.4fr_1fr_1fr]">
       <div>
         <div class="flex items-center gap-3">
-          <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-primary text-brand-dark">
-            <span class="text-sm font-semibold">CQ</span>
-          </div>
+          <img
+            :src="logoSrc"
+            alt="Logo CarbonQuest"
+            class="h-14 w-20 shrink-0 object-contain"
+          />
           <span class="text-lg font-semibold">{{ props.brand }}</span>
         </div>
         <p class="mt-4 max-w-sm text-sm text-white/70">
@@ -69,7 +73,7 @@ const props = defineProps({
       </div>
       <div>
         <p class="text-xs font-semibold uppercase tracking-[0.3em] text-white/50">
-          Resources
+          Sumber Daya
         </p>
         <ul class="mt-4 space-y-2 text-sm text-white/75">
           <li v-for="link in props.resourceLinks" :key="link.label">

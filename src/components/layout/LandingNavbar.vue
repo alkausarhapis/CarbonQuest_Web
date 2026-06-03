@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue";
+import logoSrc from "../../assets/img/logo.png";
 
 const props = defineProps({
   brand: {
@@ -9,19 +10,19 @@ const props = defineProps({
   menuItems: {
     type: Array,
     default: () => [
-      { label: "Features", href: "#features" },
-      { label: "Missions", href: "#missions" },
-      { label: "Articles", href: "#articles" },
-      { label: "Leaderboard", href: "#leaderboard" },
+      { label: "Fitur", href: "#features" },
+      { label: "Misi", href: "#missions" },
+      { label: "Artikel", href: "#articles" },
+      { label: "Peringkat", href: "#leaderboard" },
     ],
   },
   cta: {
     type: Object,
-    default: () => ({ label: "Start Journey", href: "/dashboard" }),
+    default: () => ({ label: "Mulai Perjalanan", href: "/dashboard" }),
   },
   secondaryCta: {
     type: Object,
-    default: () => ({ label: "Explore Features", href: "#features" }),
+    default: () => ({ label: "Jelajahi Fitur", href: "#features" }),
   },
 });
 
@@ -39,12 +40,14 @@ const closeMenu = () => {
 <template>
   <nav class="sticky top-0 z-40 border-b border-brand-dark/5 bg-brand-background/90 backdrop-blur">
     <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-      <div class="flex items-center gap-3">
-        <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-dark text-white">
-            <span class="text-sm font-semibold">CQ</span>
-        </div>
-          <span class="text-lg font-semibold text-brand-dark">{{ props.brand }}</span>
-      </div>
+      <a href="#home" class="flex items-center gap-3" aria-label="CarbonQuest">
+        <img
+          :src="logoSrc"
+          alt="Logo CarbonQuest"
+          class="h-12 w-16 shrink-0 object-contain"
+        />
+        <span class="text-lg font-semibold text-brand-dark">{{ props.brand }}</span>
+      </a>
 
       <div class="hidden items-center gap-8 text-sm font-medium text-brand-dark/70 lg:flex">
         <a
@@ -76,7 +79,7 @@ const closeMenu = () => {
         type="button"
         class="flex h-10 w-10 items-center justify-center rounded-full border border-brand-dark/10 text-brand-dark lg:hidden"
         @click="toggleMenu"
-        aria-label="Toggle menu"
+        aria-label="Buka tutup menu"
       >
         <svg
           v-if="!isOpen"

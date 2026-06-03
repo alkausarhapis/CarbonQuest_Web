@@ -3,25 +3,25 @@ import SectionHeader from "../shared/SectionHeader.vue";
 
 const missions = [
   {
-    title: "Use Public Transport",
+    title: "Gunakan Transportasi Umum",
     xp: 50,
     progress: 70,
-    difficulty: "Easy",
-    deadline: "2 days left",
+    difficulty: "Mudah",
+    deadline: "2 hari lagi",
   },
   {
-    title: "Reduce Plastic Usage",
+    title: "Kurangi Penggunaan Plastik",
     xp: 75,
     progress: 45,
-    difficulty: "Medium",
-    deadline: "4 days left",
+    difficulty: "Sedang",
+    deadline: "4 hari lagi",
   },
   {
-    title: "Plant a Tree",
+    title: "Tanam Pohon",
     xp: 150,
     progress: 20,
-    difficulty: "Hard",
-    deadline: "7 days left",
+    difficulty: "Sulit",
+    deadline: "7 hari lagi",
   },
 ];
 </script>
@@ -32,33 +32,33 @@ const missions = [
       <div class="space-y-6">
         <SectionHeader
           align="left"
-          label="Mission Showcase"
-          title="Gamified actions that move the planet forward"
-          subtitle="Pick a mission, track progress, and unlock rewards with every sustainable choice."
+          label="Sorotan Misi"
+          title="Aksi bergaya gim yang mendorong bumi ke arah lebih baik"
+          subtitle="Pilih misi, pantau progres, dan buka hadiah dari setiap pilihan berkelanjutan."
         />
         <div class="grid gap-4">
           <div class="rounded-3xl border border-brand-dark/10 bg-white p-5 shadow-soft">
-            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-brand-dark/50">Active Missions</p>
+            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-brand-dark/50">Misi Aktif</p>
             <div class="mt-4 grid grid-cols-3 gap-4 text-sm">
               <div>
                 <p class="text-brand-dark/60">Total XP</p>
                 <p class="mt-2 text-lg font-semibold text-brand-dark">275</p>
               </div>
               <div>
-                <p class="text-brand-dark/60">Completion</p>
+                <p class="text-brand-dark/60">Penyelesaian</p>
                 <p class="mt-2 text-lg font-semibold text-brand-dark">45%</p>
               </div>
               <div>
-                <p class="text-brand-dark/60">Streak</p>
-                <p class="mt-2 text-lg font-semibold text-brand-dark">6 days</p>
+                <p class="text-brand-dark/60">Rangkaian</p>
+                <p class="mt-2 text-lg font-semibold text-brand-dark">6 hari</p>
               </div>
             </div>
           </div>
           <div class="rounded-3xl border border-brand-dark/10 bg-brand-dark p-5 text-white shadow-card">
-            <p class="text-xs uppercase tracking-[0.3em] text-white/60">Impact Summary</p>
+            <p class="text-xs uppercase tracking-[0.3em] text-white/60">Ringkasan Dampak</p>
             <p class="mt-3 text-2xl font-semibold">-12.4 kg CO2</p>
             <p class="mt-2 text-sm text-white/70">
-              Emissions avoided this month with missions completed.
+              Emisi yang dihindari bulan ini lewat misi yang selesai.
             </p>
           </div>
         </div>

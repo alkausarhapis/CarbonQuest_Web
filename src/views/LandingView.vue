@@ -1,6 +1,6 @@
 <script setup>
-import MarketingNavbar from "../components/layout/MarketingNavbar.vue";
-import MarketingFooter from "../components/layout/MarketingFooter.vue";
+import LandingNavbar from "../components/layout/LandingNavbar.vue";
+import LandingFooter from "../components/layout/LandingFooter.vue";
 import HeroSection from "../components/landing/HeroSection.vue";
 import FeaturesSection from "../components/landing/FeaturesSection.vue";
 import MissionShowcase from "../components/landing/MissionShowcase.vue";
@@ -11,34 +11,34 @@ import StatsSection from "../components/landing/StatsSection.vue";
 import CTASection from "../components/landing/CTASection.vue";
 
 const menuItems = [
-  { label: "Features", href: "#features" },
-  { label: "Missions", href: "#missions" },
-  { label: "Articles", href: "#articles" },
-  { label: "Quizzes", href: "#quizzes" },
-  { label: "Leaderboard", href: "#leaderboard" },
-  { label: "Stats", href: "#stats" },
+  { label: "Fitur", href: "#features" },
+  { label: "Misi", href: "#missions" },
+  { label: "Artikel", href: "#articles" },
+  { label: "Kuis", href: "#quizzes" },
+  { label: "Peringkat", href: "#leaderboard" },
+  { label: "Statistik", href: "#stats" },
 ];
 
 const navLinks = [
-  { label: "Features", href: "#features" },
-  { label: "Missions", href: "#missions" },
-  { label: "Articles", href: "#articles" },
-  { label: "Leaderboard", href: "#leaderboard" },
+  { label: "Fitur", href: "#features" },
+  { label: "Misi", href: "#missions" },
+  { label: "Artikel", href: "#articles" },
+  { label: "Peringkat", href: "#leaderboard" },
 ];
 </script>
 
 <template>
   <div class="min-h-screen bg-brand-background font-brandBody text-brand-dark">
-    <MarketingNavbar
+    <LandingNavbar
       brand="CarbonQuest"
       :menu-items="menuItems"
-      :cta="{ label: 'Start Journey', href: 'https://drive.google.com/drive/folders/1jFhOWbdc7BVrS3xr8qWJn1KzOh6Z8_26' }"
-      :secondary-cta="{ label: 'Explore Features', href: '#features' }"
+      :cta="{ label: 'Mulai Perjalanan', href: 'https://drive.google.com/drive/folders/1jFhOWbdc7BVrS3xr8qWJn1KzOh6Z8_26' }"
+      :secondary-cta="{ label: 'Jelajahi Fitur', href: '#features' }"
     />
 
     <HeroSection
-      :primary-cta="{ label: 'Start Journey', href: 'https://drive.google.com/drive/folders/1jFhOWbdc7BVrS3xr8qWJn1KzOh6Z8_26' }"
-      :secondary-cta="{ label: 'Explore Features', href: '#features' }"
+      :primary-cta="{ label: 'Mulai Perjalanan', href: 'https://drive.google.com/drive/folders/1jFhOWbdc7BVrS3xr8qWJn1KzOh6Z8_26' }"
+      :secondary-cta="{ label: 'Jelajahi Fitur', href: '#features' }"
     />
     <FeaturesSection />
     <MissionShowcase />
@@ -48,14 +48,14 @@ const navLinks = [
     <StatsSection />
     <CTASection />
 
-    <MarketingFooter
+    <LandingFooter
       brand="CarbonQuest"
       :nav-links="navLinks"
       :resource-links="[
-        { label: 'Dashboard', href: '/' },
-        { label: 'Articles', href: '/articles' },
-        { label: 'Missions', href: '/missions' },
-        { label: 'Quizzes', href: '/quizzes/create' },
+        { label: 'Dasbor', href: '/' },
+        { label: 'Artikel', href: '/articles' },
+        { label: 'Misi', href: '/missions' },
+        { label: 'Kuis', href: '/quizzes/create' },
       ]"
     />
   </div>

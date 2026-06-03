@@ -1,12 +1,19 @@
 <script setup>
 import { computed } from "vue";
-import { RouterLink, useRoute } from "vue-router";
+import { RouterLink, useRoute, useRouter } from "vue-router";
+import { useAuthStore } from "../../stores/auth";
+import {
+  LayoutGrid,
+  FileText,
+  Target,
+  ClipboardCheck,
+  KeyRound,
+  LogOut,
+  X,
+} from "@lucide/vue";
+import logoSrc from "../../assets/img/logo.png";
 
 const props = defineProps({
-  brand: {
-    type: String,
-    default: "CarbonQuest",
-  },
   items: {
     type: Array,
     default: () => [],
@@ -19,67 +26,108 @@ const props = defineProps({
 
 const emit = defineEmits(["close"]);
 const route = useRoute();
+const router = useRouter();
+const authStore = useAuthStore();
 
-const isActive = (path) => {
-  if (path === "/dashboard") {
-    return route.path === "/dashboard";
-  }
+const menuItems = [
+  { label: "Dashboard", path: "/", icon: LayoutGrid },
+  { label: "Artikel", path: "/articles/create", icon: FileText },
+  { label: "Misi", path: "/missions/create", icon: Target },
+  { label: "Quiz", path: "/quizzes/create", icon: ClipboardCheck },
+];
+
+function isActive(path) {
+  if (path === "/") return route.path === "/";
   return route.path.startsWith(path);
-};
+}
 
-const asideClasses = computed(() => {
-  return [
-    "fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-dark/5 bg-surface px-4 py-6 transition-transform duration-300 lg:static lg:translate-x-0",
-    props.open ? "translate-x-0" : "-translate-x-full",
-  ].join(" ");
-});
+function handleLogout() {
+  authStore.logout();
+  router.push("/login");
+}
+
+const asideClasses = computed(() => [
+  "fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-gray-200 bg-white px-4 py-6 transition-transform duration-200 dark:border-gray-700 dark:bg-gray-900 lg:translate-x-0",
+  props.open ? "translate-x-0" : "-translate-x-full",
+].join(" "));
 </script>
 
 <template>
+  <Teleport to="body">
+    <div
+      v-if="open"
+      class="fixed inset-0 z-30 bg-black/50 lg:hidden"
+      @click="emit('close')"
+    ></div>
+  </Teleport>
+
   <aside :class="asideClasses">
-    <div class="flex items-center gap-3 px-2">
-      <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-dark text-white">
-        <span class="text-sm font-semibold">CQ</span>
+    <div class="flex items-center justify-between px-2">
+      <div class="flex items-center gap-3">
+        <img
+          :src="logoSrc"
+          alt="Logo CarbonQuest"
+          class="h-10 w-12 shrink-0 object-contain"
+        />
+        <span class="text-lg font-semibold">
+          <span class="text-gray-900 dark:text-white">Carbon</span>
+          <span class="text-brand-primary">Quest</span>
+        </span>
       </div>
-      <span class="text-lg font-semibold text-dark">{{ props.brand }}</span>
+      <button
+        @click="emit('close')"
+        class="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-200 lg:hidden"
+      >
+        <X class="h-5 w-5" />
+      </button>
     </div>
 
-    <nav class="mt-8 flex-1 space-y-2">
-      <RouterLink
-        v-for="item in props.items"
-        :key="item.path"
-        :to="item.path"
-        class="flex items-center gap-3 rounded-2xl px-3 py-2 text-sm font-semibold transition"
-        :class="
-          isActive(item.path)
-            ? 'bg-dark text-white shadow-soft'
-            : 'text-dark/60 hover:bg-dark/5'
-        "
-        @click="emit('close')"
+    <div class="mt-8 flex-1">
+      <p
+        class="mb-4 px-2 text-xs font-medium uppercase tracking-widest text-gray-400"
       >
-        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-dark/10">
-          <svg
-            class="h-4 w-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              :d="item.icon"
-            />
-          </svg>
-        </span>
-        <span>{{ item.label }}</span>
-      </RouterLink>
-    </nav>
+        NAVIGASI
+      </p>
 
-    <div class="rounded-3xl border border-dark/10 bg-dark px-4 py-5 text-white">
-      <p class="text-xs uppercase tracking-[0.3em] text-white/60">Carbon Score</p>
-      <p class="mt-2 text-2xl font-semibold">845</p>
-      <p class="mt-1 text-xs text-white/70">Weekly improvement +12%</p>
+      <nav class="space-y-1">
+        <RouterLink
+          v-for="item in menuItems"
+          :key="item.path"
+          :to="item.path"
+          class="relative flex h-12 items-center gap-3 rounded-xl px-4 text-sm transition-all duration-200"
+          :class="
+            isActive(item.path)
+              ? 'bg-slate-100 font-semibold text-gray-900 dark:bg-gray-800 dark:text-white'
+              : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white'
+          "
+          @click="emit('close')"
+        >
+          <span
+            v-if="isActive(item.path)"
+            class="absolute left-0 top-1 bottom-1 w-1 rounded-r bg-brand-primary"
+          ></span>
+          <component :is="item.icon" class="h-5 w-5 shrink-0" />
+          <span>{{ item.label }}</span>
+        </RouterLink>
+      </nav>
+    </div>
+
+    <div class="mt-auto space-y-2">
+      <RouterLink
+        to="/change-password"
+        class="flex h-12 items-center gap-3 rounded-xl bg-gray-100 px-4 text-sm text-gray-700 transition-all duration-200 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+      >
+        <KeyRound class="h-5 w-5 shrink-0" />
+        Ganti Password
+      </RouterLink>
+
+      <button
+        @click="handleLogout"
+        class="flex h-12 w-full items-center gap-3 rounded-xl bg-red-50 px-4 text-sm text-red-600 transition-all duration-200 hover:bg-red-100 dark:bg-red-950 dark:text-red-400 dark:hover:bg-red-900"
+      >
+        <LogOut class="h-5 w-5 shrink-0" />
+        Logout
+      </button>
     </div>
   </aside>
 </template>

@@ -16,10 +16,11 @@ export default {
         ink: "#1a1a1a",
         forest: "#2d3a22",
         brand: {
-          primary: "#D8F04A",
-          secondary: "#C8CFB1",
-          dark: "#191314",
-          background: "#F8F8F8",
+          primary: "#6EC9E0",
+          secondary: "#206171",
+          medium: "#3E8799",
+          dark: "#123942",
+          background: "#EDEDED",
           white: "#FFFFFF",
         },
         success: "#22C55E",
@@ -33,9 +34,9 @@ export default {
         brandBody: ["Inter", "sans-serif"],
       },
       boxShadow: {
-        soft: "0 20px 60px -32px rgba(25, 19, 20, 0.35)",
-        card: "0 18px 40px -28px rgba(25, 19, 20, 0.45)",
-        glow: "0 0 0 1px rgba(216, 240, 74, 0.25), 0 20px 45px -30px rgba(216, 240, 74, 0.65)",
+        soft: "0 20px 60px -32px rgba(18, 57, 66, 0.28)",
+        card: "0 18px 40px -28px rgba(18, 57, 66, 0.45)",
+        glow: "0 0 0 1px rgba(110, 201, 224, 0.35), 0 20px 45px -30px rgba(62, 135, 153, 0.55)",
       },
       keyframes: {
         "fade-up": {
@@ -51,8 +52,8 @@ export default {
           "100%": { width: "var(--progress)" },
         },
         glow: {
-          "0%, 100%": { boxShadow: "0 0 0 0 rgba(216, 240, 74, 0)" },
-          "50%": { boxShadow: "0 0 0 10px rgba(216, 240, 74, 0.2)" },
+          "0%, 100%": { boxShadow: "0 0 0 0 rgba(110, 201, 224, 0)" },
+          "50%": { boxShadow: "0 0 0 10px rgba(110, 201, 224, 0.22)" },
         },
       },
       animation: {
@@ -62,8 +63,8 @@ export default {
         glow: "glow 3.2s ease-in-out infinite",
       },
       backgroundImage: {
-        "hero-radial": "radial-gradient(circle at top left, rgba(216, 240, 74, 0.35), transparent 55%)",
-        "soft-grid": "linear-gradient(90deg, rgba(25, 19, 20, 0.05) 1px, transparent 1px), linear-gradient(180deg, rgba(25, 19, 20, 0.05) 1px, transparent 1px)",
+        "hero-radial": "radial-gradient(ellipse 70% 60% at 50% -10%, rgba(110, 201, 224, 0.4), transparent)",
+        "soft-grid": "linear-gradient(90deg, rgba(18, 57, 66, 0.05) 1px, transparent 1px), linear-gradient(180deg, rgba(18, 57, 66, 0.05) 1px, transparent 1px)",
       },
     },
   },

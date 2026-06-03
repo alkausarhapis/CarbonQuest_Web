@@ -2,11 +2,11 @@
 const props = defineProps({
   primaryCta: {
     type: Object,
-    default: () => ({ label: "Start Journey", href: 'https://drive.google.com/drive/folders/1jFhOWbdc7BVrS3xr8qWJn1KzOh6Z8_26' }),
+    default: () => ({ label: "Mulai Perjalanan", href: 'https://drive.google.com/drive/folders/1jFhOWbdc7BVrS3xr8qWJn1KzOh6Z8_26' }),
   },
   secondaryCta: {
     type: Object,
-    default: () => ({ label: "Talk to our team", href: "#" }),
+    default: () => ({ label: "Hubungi tim kami", href: "#" }),
   },
 });
 </script>
@@ -14,18 +14,19 @@ const props = defineProps({
 <template>
   <section id="cta" class="bg-brand-white px-6 py-20">
     <div class="mx-auto max-w-6xl">
-      <div class="relative overflow-hidden rounded-3xl bg-brand-dark px-8 py-12 text-white shadow-card">
+      <div class="relative overflow-hidden rounded-3xl bg-brand-secondary px-8 py-12 text-white shadow-card">
         <div class="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-brand-primary/70 blur-[80px]"></div>
         <div class="relative z-10">
           <p class="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">
-            Start Your CarbonQuest
+            Mulai CarbonQuest-mu
           </p>
           <h2 class="mt-4 text-3xl font-semibold md:text-4xl">
-            Make sustainability feel effortless, measurable, and rewarding.
+            Jadikan keberlanjutan terasa mudah, terukur, dan menyenangkan.
           </h2>
           <p class="mt-4 max-w-2xl text-sm text-white/70 md:text-base">
-            Join a new generation of climate-aware people turning daily actions
-            into meaningful progress with missions, quizzes, and community goals.
+            Bergabung dengan generasi baru yang peduli iklim dan mengubah aksi
+            harian menjadi progres bermakna lewat misi, kuis, dan tujuan
+            komunitas.
           </p>
           <div class="mt-8 flex flex-wrap gap-4">
             <a

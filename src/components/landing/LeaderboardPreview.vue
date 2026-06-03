@@ -2,11 +2,11 @@
 import SectionHeader from "../shared/SectionHeader.vue";
 
 const leaders = [
-  { rank: 1, name: "Alya Quinn", level: "Eco Explorer", score: 895, xp: 3420 },
-  { rank: 2, name: "Raka Pratama", level: "Green Builder", score: 872, xp: 3270 },
-  { rank: 3, name: "Maya Putri", level: "Impact Maker", score: 858, xp: 3120 },
-  { rank: 4, name: "Fajar Utama", level: "Leaf Runner", score: 832, xp: 2980 },
-  { rank: 5, name: "Sinta Wardana", level: "Eco Starter", score: 812, xp: 2840 },
+  { rank: 1, name: "Alya Quinn", level: "Penjelajah Hijau", score: 895, xp: 3420 },
+  { rank: 2, name: "Raka Pratama", level: "Pembangun Hijau", score: 872, xp: 3270 },
+  { rank: 3, name: "Maya Putri", level: "Pembuat Dampak", score: 858, xp: 3120 },
+  { rank: 4, name: "Fajar Utama", level: "Penggerak Aksi", score: 832, xp: 2980 },
+  { rank: 5, name: "Sinta Wardana", level: "Pemula Hijau", score: 812, xp: 2840 },
 ];
 </script>
 
@@ -14,17 +14,17 @@ const leaders = [
   <section id="leaderboard" class="bg-brand-white px-6 py-20">
     <div class="mx-auto max-w-6xl space-y-12">
       <SectionHeader
-        label="Leaderboard Preview"
-        title="Friendly competition fuels bigger impact"
-        subtitle="See how weekly rankings keep everyone motivated and celebrating progress."
+        label="Pratinjau Peringkat"
+        title="Kompetisi sehat mendorong dampak yang lebih besar"
+        subtitle="Lihat bagaimana peringkat mingguan menjaga motivasi dan merayakan setiap progres."
       />
 
       <div class="overflow-hidden rounded-3xl border border-brand-dark/10 bg-white shadow-soft">
         <div class="grid grid-cols-5 gap-2 border-b border-brand-dark/10 bg-brand-dark/5 px-6 py-4 text-xs font-semibold uppercase tracking-widest text-brand-dark/60">
-          <span>Rank</span>
-          <span>User</span>
-          <span>Level</span>
-          <span>Carbon Score</span>
+          <span>Peringkat</span>
+          <span>Pengguna</span>
+          <span>Tingkat</span>
+          <span>Skor Karbon</span>
           <span>XP</span>
         </div>
         <div class="divide-y divide-brand-dark/10">

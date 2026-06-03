@@ -4,7 +4,7 @@ import { RouterView, useRoute } from "vue-router";
 import Toast from "./components/Toast.vue";
 import { useDarkMode } from "./composables/useDarkMode";
 
-import logoLight from "./assets/img/favicon.ico";
+import logoLight from "./assets/img/logo.png";
 
 const route = useRoute();
 const { isDark } = useDarkMode();
