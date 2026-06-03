@@ -59,7 +59,7 @@ const quizzes = [
             type="button"
             class="mt-6 rounded-full border border-brand-dark/10 px-4 py-2 text-xs font-semibold text-brand-dark transition hover:border-brand-dark/40"
           >
-            Start 
+            Start quiz
           </button>
         </div>
       </div>
