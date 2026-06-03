@@ -2,6 +2,9 @@
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import LoadingSpinner from "../../components/LoadingSpinner.vue";
+import FieldError from "../../components/shared/FieldError.vue";
+import { useFormValidation } from "../../composables/useFormValidation";
+import { required, selectRequired, pointsRequired } from "../../utils/validation";
 import api from "../../services/api";
 import { useMissionsStore } from "../../stores/missions";
 import { useToastStore } from "../../stores/toast";
@@ -19,8 +22,12 @@ const form = ref({
 });
 
 const loading = ref(true);
+const apiError = ref("");
 
 const tagOptions = ["transportasi", "makanan", "energi", "lingkungan"];
+
+const { errors, validate, clearField, clearErrors, touch, hasError } =
+  useFormValidation();
 
 onMounted(async () => {
   try {
@@ -39,22 +46,18 @@ onMounted(async () => {
 });
 
 async function handleSubmit() {
-  if (!form.value.title.trim()) {
-    toastStore.error("Judul misi harus diisi");
-    return;
-  }
-  if (!form.value.tags) {
-    toastStore.error("Tag misi harus dipilih");
-    return;
-  }
-  if (!form.value.description.trim()) {
-    toastStore.error("Perintah misi harus diisi");
-    return;
-  }
-  if (!form.value.points) {
-    toastStore.error("Poin misi harus diisi");
-    return;
-  }
+  apiError.value = "";
+
+  const rules = {
+    title: (v) => required(v, "Judul misi"),
+    tags: (v) => selectRequired(v, "Tag misi"),
+    description: (v) => required(v, "Perintah misi"),
+    points: (v) => pointsRequired(v, "Poin misi"),
+  };
+
+  if (!validate(rules, form.value)) return;
+
+  clearErrors();
 
   try {
     const formData = new FormData();
@@ -67,7 +70,7 @@ async function handleSubmit() {
     toastStore.success("Misi berhasil diperbarui");
     router.push("/");
   } catch (error) {
-    toastStore.error(missionsStore.error || "Gagal memperbarui misi");
+    apiError.value = missionsStore.error || "Gagal memperbarui misi";
   }
 }
 </script>
@@ -75,7 +78,7 @@ async function handleSubmit() {
 <template>
   <div>
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold text-gray-900">Edit Misi</h1>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Edit Misi</h1>
       <div class="flex gap-2">
         <button
           @click="router.push('/')"
@@ -103,64 +106,88 @@ async function handleSubmit() {
         <label
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
         >
-          Judul Misi <span class="text-red-500">*</span>
+          Judul Misi
         </label>
         <input
           v-model="form.title"
+          @blur="touch('title')"
+          @input="clearField('title')"
           type="text"
           placeholder="Ketik judul disini"
-          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+          :aria-invalid="hasError('title')"
+          :aria-describedby="hasError('title') ? 'title-error' : undefined"
+          class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+          :class="hasError('title') ? 'border-red-500 ring-red-500/20 focus:ring-red-500/30' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500'"
         />
+        <FieldError :message="hasError('title') ? errors.title : ''" id="title-error" />
       </div>
 
       <div>
         <label
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
         >
-          Tag Misi <span class="text-red-500">*</span>
+          Tag Misi
         </label>
         <select
           v-model="form.tags"
-          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+          @blur="touch('tags')"
+          @change="clearField('tags')"
+          :aria-invalid="hasError('tags')"
+          :aria-describedby="hasError('tags') ? 'tags-error' : undefined"
+          class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+          :class="hasError('tags') ? 'border-red-500 ring-red-500/20 focus:ring-red-500/30' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500'"
         >
           <option value="" disabled>Pilih tag misi</option>
           <option v-for="tag in tagOptions" :key="tag" :value="tag">
             {{ tag.charAt(0).toUpperCase() + tag.slice(1) }}
           </option>
         </select>
+        <FieldError :message="hasError('tags') ? errors.tags : ''" id="tags-error" />
       </div>
 
       <div>
         <label
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-          >Perintah Misi <span class="text-red-500">*</span></label
+          >Perintah Misi</label
         >
         <textarea
           v-model="form.description"
+          @blur="touch('description')"
+          @input="clearField('description')"
           rows="8"
           placeholder="Masukkan perintah misi"
-          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-y bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+          :aria-invalid="hasError('description')"
+          :aria-describedby="hasError('description') ? 'description-error' : undefined"
+          class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent outline-none resize-y bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+          :class="hasError('description') ? 'border-red-500 ring-red-500/20 focus:ring-red-500/30' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500'"
         ></textarea>
+        <FieldError :message="hasError('description') ? errors.description : ''" id="description-error" />
       </div>
 
       <div>
         <label
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-          >Poin Misi <span class="text-red-500">*</span></label
+          >Poin Misi</label
         >
         <input
           v-model="form.points"
+          @blur="touch('points')"
+          @input="clearField('points')"
           type="number"
           placeholder="Masukkan poin (misal: 100)"
-          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+          :aria-invalid="hasError('points')"
+          :aria-describedby="hasError('points') ? 'points-error' : undefined"
+          class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+          :class="hasError('points') ? 'border-red-500 ring-red-500/20 focus:ring-red-500/30' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500'"
         />
+        <FieldError :message="hasError('points') ? errors.points : ''" id="points-error" />
       </div>
 
       <div
-        v-if="missionsStore.error"
+        v-if="apiError"
         class="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg"
       >
-        {{ missionsStore.error }}
+        {{ apiError }}
       </div>
     </form>
   </div>

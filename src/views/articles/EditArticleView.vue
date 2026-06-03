@@ -2,6 +2,9 @@
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import LoadingSpinner from "../../components/LoadingSpinner.vue";
+import FieldError from "../../components/shared/FieldError.vue";
+import { useFormValidation } from "../../composables/useFormValidation";
+import { required } from "../../utils/validation";
 import api from "../../services/api";
 import { useArticlesStore } from "../../stores/articles";
 import { useToastStore } from "../../stores/toast";
@@ -22,6 +25,10 @@ const form = ref({
 const imagePreview = ref(null);
 const fileInput = ref(null);
 const loading = ref(true);
+const apiError = ref("");
+
+const { errors, validate, clearField, clearErrors, touch, hasError } =
+  useFormValidation();
 
 onMounted(async () => {
   try {
@@ -64,18 +71,17 @@ function removeImage() {
 }
 
 async function handleSubmit() {
-  if (!form.value.title.trim()) {
-    toastStore.error("Judul artikel harus diisi");
-    return;
-  }
-  if (!form.value.topic.trim()) {
-    toastStore.error("Topik harus diisi");
-    return;
-  }
-  if (!form.value.description.trim()) {
-    toastStore.error("Isi artikel harus diisi");
-    return;
-  }
+  apiError.value = "";
+
+  const rules = {
+    title: (v) => required(v, "Judul artikel"),
+    topic: (v) => required(v, "Topik"),
+    description: (v) => required(v, "Isi artikel"),
+  };
+
+  if (!validate(rules, form.value)) return;
+
+  clearErrors();
 
   try {
     const formData = new FormData();
@@ -92,7 +98,7 @@ async function handleSubmit() {
     toastStore.success("Artikel berhasil diperbarui");
     router.push("/");
   } catch (error) {
-    toastStore.error(articlesStore.error || "Gagal memperbarui artikel");
+    apiError.value = articlesStore.error || "Gagal memperbarui artikel";
   }
 }
 </script>
@@ -129,40 +135,58 @@ async function handleSubmit() {
       <div>
         <label
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-          >Judul Artikel <span class="text-red-500">*</span></label
+          >Judul Artikel</label
         >
         <input
           v-model="form.title"
+          @blur="touch('title')"
+          @input="clearField('title')"
           type="text"
           placeholder="Ketik judul disini"
-          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+          :aria-invalid="hasError('title')"
+          :aria-describedby="hasError('title') ? 'title-error' : undefined"
+          class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+          :class="hasError('title') ? 'border-red-500 ring-red-500/20 focus:ring-red-500/30' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500'"
         />
+        <FieldError :message="hasError('title') ? errors.title : ''" id="title-error" />
       </div>
 
       <div>
         <label
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-          >Topik <span class="text-red-500">*</span></label
+          >Topik</label
         >
         <input
           v-model="form.topic"
+          @blur="touch('topic')"
+          @input="clearField('topic')"
           type="text"
           placeholder="e.g., climate, mobility"
-          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+          :aria-invalid="hasError('topic')"
+          :aria-describedby="hasError('topic') ? 'topic-error' : undefined"
+          class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+          :class="hasError('topic') ? 'border-red-500 ring-red-500/20 focus:ring-red-500/30' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500'"
         />
+        <FieldError :message="hasError('topic') ? errors.topic : ''" id="topic-error" />
       </div>
 
       <div>
         <label
           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-          >Isi Artikel <span class="text-red-500">*</span></label
+          >Isi Artikel</label
         >
         <textarea
           v-model="form.description"
+          @blur="touch('description')"
+          @input="clearField('description')"
           rows="8"
           placeholder="Masukkan isi artikel"
-          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-y bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+          :aria-invalid="hasError('description')"
+          :aria-describedby="hasError('description') ? 'description-error' : undefined"
+          class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent outline-none resize-y bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+          :class="hasError('description') ? 'border-red-500 ring-red-500/20 focus:ring-red-500/30' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500'"
         ></textarea>
+        <FieldError :message="hasError('description') ? errors.description : ''" id="description-error" />
       </div>
 
       <div>
@@ -223,10 +247,10 @@ async function handleSubmit() {
       </div>
 
       <div
-        v-if="articlesStore.error"
+        v-if="apiError"
         class="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg"
       >
-        {{ articlesStore.error }}
+        {{ apiError }}
       </div>
     </form>
   </div>

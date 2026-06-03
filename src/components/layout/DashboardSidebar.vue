@@ -97,15 +97,11 @@ const asideClasses = computed(() => [
           class="relative flex h-12 items-center gap-3 rounded-xl px-4 text-sm transition-all duration-200"
           :class="
             isActive(item.path)
-              ? 'bg-slate-100 font-semibold text-gray-900 dark:bg-gray-800 dark:text-white'
-              : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white'
+              ? 'bg-gray-100 shadow-sm font-semibold text-gray-900 dark:bg-slate-800 dark:text-white dark:shadow-black/10'
+              : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800/50 dark:hover:text-white'
           "
           @click="emit('close')"
         >
-          <span
-            v-if="isActive(item.path)"
-            class="absolute left-0 top-1 bottom-1 w-1 rounded-r bg-brand-primary"
-          ></span>
           <component :is="item.icon" class="h-5 w-5 shrink-0" />
           <span>{{ item.label }}</span>
         </RouterLink>

@@ -6,6 +6,8 @@ export const useToastStore = defineStore("toast", () => {
   let toastId = 0;
 
   function showToast(message, type = "success", duration = 3000) {
+    toasts.value.splice(0);
+
     const id = toastId++;
     toasts.value.push({
       id,

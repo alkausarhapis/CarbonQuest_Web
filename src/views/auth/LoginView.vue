@@ -1,8 +1,12 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { AlertCircle, X } from "@lucide/vue";
 import logoIcon from "../../assets/img/logo.png";
 import LoadingSpinner from "../../components/LoadingSpinner.vue";
+import FieldError from "../../components/shared/FieldError.vue";
+import { useFormValidation } from "../../composables/useFormValidation";
+import { required, email as emailRule } from "../../utils/validation";
 import { useDarkMode } from "../../composables/useDarkMode";
 import { useAuthStore } from "../../stores/auth";
 
@@ -10,21 +14,38 @@ const router = useRouter();
 const authStore = useAuthStore();
 const { isDark, toggleDarkMode } = useDarkMode();
 
-const email = ref("");
-const password = ref("");
+const form = ref({ email: "", password: "" });
 const showPassword = ref(false);
 
-function clearError() {
-  if (authStore.error) {
-    authStore.error = null;
-    localStorage.removeItem("loginError");
-  }
+const { errors, validate, clearField, clearErrors, touch, hasError, setErrors } =
+  useFormValidation();
+
+const displayError = ref("");
+
+function clearAllErrors() {
+  clearErrors();
+  displayError.value = "";
+  authStore.error = null;
+  localStorage.removeItem("loginError");
 }
 
 async function handleLogin() {
-  const success = await authStore.login(email.value, password.value);
+  displayError.value = "";
+
+  const rules = {
+    email: (v) => required(v, "Email") || emailRule(v),
+    password: (v) => required(v, "Kata sandi"),
+  };
+
+  if (!validate(rules, form.value)) return;
+
+  clearErrors();
+
+  const success = await authStore.login(form.value.email, form.value.password);
   if (success) {
     router.push("/");
+  } else if (authStore.error) {
+    displayError.value = authStore.error;
   }
 }
 </script>
@@ -111,13 +132,17 @@ async function handleLogin() {
               >Email</label
             >
             <input
-              v-model="email"
-              @input="clearError"
-              type="email"
+              v-model="form.email"
+              @blur="touch('email')"
+              @input="clearField('email'); displayError = ''"
+              type="text"
               placeholder="Masukkan email Anda"
-              required
-              class="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition bg-white border border-gray-300 rounded-lg outline-none dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+              :aria-invalid="hasError('email')"
+              :aria-describedby="hasError('email') ? 'email-error' : undefined"
+              class="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition bg-white border rounded-lg outline-none dark:border-gray-600 focus:ring-2 focus:border-transparent dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+              :class="hasError('email') ? 'border-red-500 ring-red-500/20 focus:ring-red-500/30' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500'"
             />
+            <FieldError :message="hasError('email') ? errors.email : ''" id="email-error" />
           </div>
 
           <div>
@@ -126,13 +151,17 @@ async function handleLogin() {
               >Kata Sandi</label
             >
             <input
-              v-model="password"
-              @input="clearError"
+              v-model="form.password"
+              @blur="touch('password')"
+              @input="clearField('password'); displayError = ''"
               :type="showPassword ? 'text' : 'password'"
               placeholder="Masukkan kata sandi"
-              required
-              class="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition bg-white border border-gray-300 rounded-lg outline-none dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+              :aria-invalid="hasError('password')"
+              :aria-describedby="hasError('password') ? 'password-error' : undefined"
+              class="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition bg-white border rounded-lg outline-none dark:border-gray-600 focus:ring-2 focus:border-transparent dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+              :class="hasError('password') ? 'border-red-500 ring-red-500/20 focus:ring-red-500/30' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500'"
             />
+            <FieldError :message="hasError('password') ? errors.password : ''" id="password-error" />
           </div>
 
           <div class="flex items-center">
@@ -150,10 +179,19 @@ async function handleLogin() {
           </div>
 
           <div
-            v-if="authStore.error"
-            class="p-3 text-red-700 bg-red-100 border border-red-400 rounded-lg dark:bg-red-900/30 dark:border-red-800 dark:text-red-400"
+            v-if="displayError"
+            class="flex items-center gap-3 rounded-xl bg-red-50 px-4 py-3 text-sm dark:bg-red-950"
           >
-            {{ authStore.error }}
+            <AlertCircle class="h-5 w-5 shrink-0 text-red-500 dark:text-red-400" />
+            <span class="flex-1 font-medium text-red-700 dark:text-red-400">{{
+              displayError
+            }}</span>
+            <button
+              @click="clearAllErrors"
+              class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-red-400 transition hover:bg-red-200 hover:text-red-600 dark:hover:bg-red-900 dark:hover:text-red-300"
+            >
+              <X class="h-4 w-4" />
+            </button>
           </div>
 
           <button

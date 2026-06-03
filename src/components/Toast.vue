@@ -10,7 +10,7 @@ const typeStyles = {
   },
   error: {
     bg: "bg-red-500 dark:bg-red-600",
-    icon: "M6 18L18 6M6 6l12 12",
+    icon: "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
   },
   warning: {
     bg: "bg-yellow-500 dark:bg-yellow-600",
@@ -34,7 +34,7 @@ const typeStyles = {
           :key="toast.id"
           :class="[
             typeStyles[toast.type]?.bg || typeStyles.info.bg,
-            'pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-white min-w-[280px] max-w-[400px]',
+            'pointer-events-auto flex items-center gap-3 px-4 py-3.5 rounded-xl shadow-xl text-white min-w-[300px] max-w-[420px] backdrop-blur-sm',
           ]"
         >
           <svg
@@ -44,6 +44,14 @@ const typeStyles = {
             viewBox="0 0 24 24"
           >
             <path
+              v-if="toast.type === 'error'"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+            <path
+              v-else
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
@@ -55,7 +63,7 @@ const typeStyles = {
 
           <button
             @click="toastStore.removeToast(toast.id)"
-            class="flex-shrink-0 p-1 rounded-full hover:bg-white/20 transition-colors"
+            class="flex-shrink-0 p-1.5 rounded-full hover:bg-white/20 transition-colors"
           >
             <svg
               class="w-4 h-4"
