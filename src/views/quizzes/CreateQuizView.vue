@@ -1,6 +1,9 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import FieldError from "../../components/shared/FieldError.vue";
+import { useFormValidation } from "../../composables/useFormValidation";
+import { required } from "../../utils/validation";
 import { useQuizzesStore } from "../../stores/quizzes";
 import { useToastStore } from "../../stores/toast";
 
@@ -15,39 +18,34 @@ const form = ref({
     {
       content: "",
       order: 1,
-      answers: [
-        { content: "", points: 0 },
-      ],
+      answers: [{ content: "", points: 0 }],
     },
   ],
 });
 
 const categories = ["Harian", "Mingguan", "Bulanan"];
+const apiError = ref("");
+
+const { errors, validate, clearField, clearErrors, touch, hasError } =
+  useFormValidation();
 
 function addQuestion() {
   form.value.questions.push({
     content: "",
     order: form.value.questions.length + 1,
-    answers: [
-      { content: "", points: 0 },
-    ],
+    answers: [{ content: "", points: 0 }],
   });
 }
 
 function removeQuestion(index) {
   if (form.value.questions.length > 1) {
     form.value.questions.splice(index, 1);
-    form.value.questions.forEach((q, i) => {
-      q.order = i + 1;
-    });
+    form.value.questions.forEach((q, i) => { q.order = i + 1; });
   }
 }
 
 function addAnswer(questionIndex) {
-  form.value.questions[questionIndex].answers.push({
-    content: "",
-    points: 0,
-  });
+  form.value.questions[questionIndex].answers.push({ content: "", points: 0 });
 }
 
 function removeAnswer(questionIndex, answerIndex) {
@@ -58,43 +56,48 @@ function removeAnswer(questionIndex, answerIndex) {
 }
 
 async function handleSubmit() {
+  apiError.value = "";
+
+  const rules = {
+    title: (v) => required(v, "Judul quiz"),
+  };
+
+  if (!validate(rules, form.value)) return;
+
+  if (form.value.questions.length === 0) {
+    errors.value.questions = "Minimal harus ada 1 pertanyaan";
+    touch("questions");
+    return;
+  }
+
+  for (let i = 0; i < form.value.questions.length; i++) {
+    const q = form.value.questions[i];
+    if (!q.content.trim()) {
+      errors.value[`q${i}_content`] = `Pertanyaan ${i + 1} harus diisi`;
+      touch(`q${i}_content`);
+      return;
+    }
+    const filledAnswers = q.answers.filter((a) => a.content.trim());
+    if (filledAnswers.length < 2) {
+      errors.value[`q${i}_answers`] = `Pertanyaan ${i + 1} harus memiliki minimal 2 jawaban`;
+      touch(`q${i}_answers`);
+      return;
+    }
+  }
+
+  clearErrors();
+
   try {
-    if (!form.value.title) {
-      alert("Judul quiz harus diisi!");
-      return;
-    }
-
-    if (form.value.questions.length === 0) {
-      alert("Minimal harus ada 1 pertanyaan!");
-      return;
-    }
-
-    for (let i = 0; i < form.value.questions.length; i++) {
-      const q = form.value.questions[i];
-      if (!q.content) {
-        alert(`Pertanyaan ${i + 1} harus diisi!`);
-        return;
-      }
-
-      const filledAnswers = q.answers.filter((a) => a.content.trim());
-      if (filledAnswers.length < 2) {
-        alert(`Pertanyaan ${i + 1} harus memiliki minimal 2 jawaban!`);
-        return;
-      }
-    }
-
     const quizData = {
       title: form.value.title,
       category: form.value.category,
       questions: form.value.questions.map((q) => ({
         content: q.content,
         order: q.order,
-        answers: q.answers
-          .filter((a) => a.content.trim())
-          .map((a) => ({
-            content: a.content,
-            points: parseInt(a.points) || 0,
-          })),
+        answers: q.answers.filter((a) => a.content.trim()).map((a) => ({
+          content: a.content,
+          points: parseInt(a.points) || 0,
+        })),
       })),
     };
 
@@ -102,7 +105,7 @@ async function handleSubmit() {
     toastStore.success("Quiz berhasil dibuat");
     router.push("/");
   } catch (error) {
-    toastStore.error(error.response?.data?.message || "Gagal membuat quiz");
+    apiError.value = error.response?.data?.message || "Gagal membuat quiz";
   }
 }
 </script>
@@ -140,25 +143,30 @@ async function handleSubmit() {
         <div>
           <label
             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-            >Judul Quiz *</label
+            >Judul Quiz</label
           >
           <input
             v-model="form.title"
+            @blur="touch('title')"
+            @input="clearField('title')"
             type="text"
             placeholder="contoh: Kuis Harian - Perubahan Iklim"
-            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-            required
+            :aria-invalid="hasError('title')"
+            :aria-describedby="hasError('title') ? 'title-error' : undefined"
+            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+            :class="hasError('title') ? 'border-red-500 ring-red-500/20 focus:ring-red-500/30' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500'"
           />
+          <FieldError :message="hasError('title') ? errors.title : ''" id="title-error" />
         </div>
 
         <div>
           <label
             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-            >Kategori *</label
+            >Kategori</label
           >
           <select
             v-model="form.category"
-            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           >
             <option v-for="cat in categories" :key="cat" :value="cat">
               {{ cat }}
@@ -203,22 +211,27 @@ async function handleSubmit() {
           <div>
             <label
               class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >Pertanyaan *</label
+              >Pertanyaan</label
             >
             <textarea
               v-model="question.content"
+              @blur="touch(`q${qIndex}_content`)"
+              @input="clearField(`q${qIndex}_content`)"
               rows="3"
               placeholder="Tuliskan pertanyaan di sini..."
-              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-              required
+              :aria-invalid="hasError(`q${qIndex}_content`)"
+              :aria-describedby="hasError(`q${qIndex}_content`) ? `q${qIndex}_content-error` : undefined"
+              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+              :class="hasError(`q${qIndex}_content`) ? 'border-red-500 ring-red-500/20 focus:ring-red-500/30' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500'"
             ></textarea>
+            <FieldError :message="hasError(`q${qIndex}_content`) ? errors[`q${qIndex}_content`] : ''" :id="`q${qIndex}_content-error`" />
           </div>
 
           <div class="space-y-3">
             <div class="flex justify-between items-center">
               <label
                 class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >Jawaban (min. 2) *</label
+                >Jawaban (min. 2)</label
               >
               <button
                 type="button"
@@ -261,11 +274,19 @@ async function handleSubmit() {
                 Hapus
               </button>
             </div>
+            <FieldError :message="hasError(`q${qIndex}_answers`) ? errors[`q${qIndex}_answers`] : ''" :id="`q${qIndex}_answers-error`" />
             <p class="text-sm text-gray-500 dark:text-gray-400">
               Setiap jawaban memiliki poin tersendiri. Poin tertinggi biasanya untuk jawaban terbaik.
             </p>
           </div>
         </div>
+      </div>
+
+      <div
+        v-if="apiError"
+        class="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg"
+      >
+        {{ apiError }}
       </div>
 
       <div class="flex justify-end gap-3">

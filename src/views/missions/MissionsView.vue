@@ -1,23 +1,63 @@
 <script setup>
-import { onMounted } from "vue";
-import { RouterLink } from "vue-router";
+import { computed, onMounted, ref } from "vue";
+import DataTable from "../../components/shared/DataTable.vue";
+import StatusBadge from "../../components/shared/StatusBadge.vue";
+import TableActions from "../../components/shared/TableActions.vue";
 import { useMissionsStore } from "../../stores/missions";
 
 const missionsStore = useMissionsStore();
 
-onMounted(() => {
-  missionsStore.fetchMissions();
+const search = ref("");
+const sortKey = ref("id_mission");
+const sortOrder = ref("asc");
+
+const columns = [
+  { key: "id_mission", label: "ID", sortable: true, width: "72px" },
+  { key: "title", label: "Title", sortable: true },
+  { key: "tags", label: "Tag", sortable: true },
+  { key: "author_role", label: "Role", sortable: true },
+  { key: "points", label: "Points", sortable: true },
+  { key: "date_created", label: "Time", sortable: true },
+  { key: "actions", label: "", sortable: false, width: "72px" },
+];
+
+function sortData(data, key, order) {
+  return [...data].sort((a, b) => {
+    let aVal = a[key], bVal = b[key];
+    if (aVal == null) aVal = "";
+    if (bVal == null) bVal = "";
+    if (key === "id_mission" || key === "points") {
+      aVal = Number(aVal) || 0; bVal = Number(bVal) || 0;
+      return order === "asc" ? aVal - bVal : bVal - aVal;
+    }
+    if (key === "date_created") {
+      aVal = new Date(aVal || 0).getTime();
+      bVal = new Date(bVal || 0).getTime();
+      return order === "asc" ? aVal - bVal : bVal - aVal;
+    }
+    aVal = String(aVal).toLowerCase();
+    bVal = String(bVal).toLowerCase();
+    return order === "asc" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+  });
+}
+
+const filteredData = computed(() => {
+  let data = missionsStore.missions;
+  if (search.value) {
+    const s = search.value.toLowerCase();
+    data = data.filter(
+      (m) => m.title?.toLowerCase().includes(s) || m.tags?.toLowerCase().includes(s)
+    );
+  }
+  return sortData(data, sortKey.value, sortOrder.value);
 });
+
+onMounted(() => { missionsStore.fetchMissions(); });
 
 function formatDate(dateString) {
   if (!dateString) return "-";
-  const date = new Date(dateString);
-  return date.toLocaleDateString("id-ID", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+  return new Date(dateString).toLocaleDateString("id-ID", {
+    day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit",
   });
 }
 
@@ -29,133 +69,43 @@ async function deleteMission(id) {
 </script>
 
 <template>
-  <div class="space-y-6">
-    <div class="flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-gray-900">Missions</h1>
-      <RouterLink
-        to="/missions/create"
-        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-      >
-        + New Mission
-      </RouterLink>
-    </div>
-
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-      <table class="w-full">
-        <thead class="bg-gray-50">
-          <tr>
-            <th
-              class="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase"
-            >
-              ID
-            </th>
-            <th
-              class="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase"
-            >
-              Title
-            </th>
-            <th
-              class="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase"
-            >
-              Author
-            </th>
-            <th
-              class="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase"
-            >
-              Role
-            </th>
-            <th
-              class="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase"
-            >
-              Points
-            </th>
-            <th
-              class="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase"
-            >
-              Time
-            </th>
-            <th
-              class="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase"
-            >
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-200">
-          <tr v-if="missionsStore.loading">
-            <td colspan="7" class="px-6 py-4 text-center text-gray-500">
-              Loading...
-            </td>
-          </tr>
-          <tr v-else-if="missionsStore.missions.length === 0">
-            <td colspan="7" class="px-6 py-4 text-center text-gray-500">
-              Tidak ada misi
-            </td>
-          </tr>
-          <tr
-            v-for="mission in missionsStore.missions"
-            :key="mission.id"
-            class="hover:bg-gray-50"
-          >
-            <td class="px-6 py-4 text-sm text-gray-900">{{ mission.id }}</td>
-            <td class="px-6 py-4 text-sm font-medium text-blue-600">
-              {{ mission.title }}
-            </td>
-            <td class="px-6 py-4 text-sm text-blue-600">
-              {{ mission.authorName || "-" }}
-            </td>
-            <td class="px-6 py-4 text-sm text-gray-900">
-              {{ mission.authorRole || "Admin" }}
-            </td>
-            <td class="px-6 py-4 text-sm text-cyan-600">
-              {{ mission.points || 0 }} pts
-            </td>
-            <td class="px-6 py-4 text-sm text-gray-500">
-              {{ formatDate(mission.createdAt) }}
-            </td>
-            <td class="px-6 py-4 text-sm">
-              <div class="flex gap-2">
-                <RouterLink
-                  :to="`/missions/edit/${mission.id}`"
-                  class="p-2 text-gray-600 hover:text-blue-600"
-                >
-                  <svg
-                    class="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                    />
-                  </svg>
-                </RouterLink>
-                <button
-                  @click="deleteMission(mission.id)"
-                  class="p-2 text-gray-600 hover:text-red-600"
-                >
-                  <svg
-                    class="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <div>
+    <DataTable
+      title="Missions"
+      :columns="columns"
+      :data="filteredData"
+      :loading="missionsStore.loading"
+      :search="search"
+      :sort-key="sortKey"
+      :sort-order="sortOrder"
+      search-placeholder="Cari misi..."
+      empty-message="Tidak ada misi"
+      @update:search="search = $event"
+      @update:sort-key="sortKey = $event"
+      @update:sort-order="sortOrder = $event"
+    >
+      <template #cell="{ key, row }">
+        <template v-if="key === 'tags'">
+          <StatusBadge :text="row.tags" variant="tag" />
+        </template>
+        <template v-else-if="key === 'author_role'">
+          <StatusBadge :text="row.author_role || 'Admin'" variant="role" />
+        </template>
+        <template v-else-if="key === 'points'">
+          <span class="font-medium text-emerald-600 dark:text-emerald-400">
+            {{ row.points || 0 }} pts
+          </span>
+        </template>
+        <template v-else-if="key === 'date_created'">
+          <span class="text-gray-400">{{ formatDate(row.date_created) }}</span>
+        </template>
+        <template v-else-if="key === 'actions'">
+          <TableActions
+            :edit-link="`/missions/edit/${row.id_mission}`"
+            @delete="deleteMission(row.id_mission)"
+          />
+        </template>
+      </template>
+    </DataTable>
   </div>
 </template>

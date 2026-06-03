@@ -1,15 +1,35 @@
 <script setup>
-import { useDarkMode } from "../composables/useDarkMode";
-import logoIcon from "../assets/img/logo.png";
-import heroImage from "../assets/img/home-screen.png";
+import LandingNavbar from "../components/layout/LandingNavbar.vue";
+import LandingFooter from "../components/layout/LandingFooter.vue";
+import HeroSection from "../components/landing/HeroSection.vue";
+import FeaturesSection from "../components/landing/FeaturesSection.vue";
+import MissionShowcase from "../components/landing/MissionShowcase.vue";
+import ArticlesPreview from "../components/landing/ArticlesPreview.vue";
+import QuizPreview from "../components/landing/QuizPreview.vue";
+import LeaderboardPreview from "../components/landing/LeaderboardPreview.vue";
+import StatsSection from "../components/landing/StatsSection.vue";
+import CTASection from "../components/landing/CTASection.vue";
 
-const { isDark, toggleDarkMode } = useDarkMode();
+const menuItems = [
+  { label: "Fitur", href: "#features" },
+  { label: "Misi", href: "#missions" },
+  { label: "Artikel", href: "#articles" },
+  { label: "Kuis", href: "#quizzes" },
+  { label: "Peringkat", href: "#leaderboard" },
+  { label: "Statistik", href: "#stats" },
+];
+
+const navLinks = [
+  { label: "Fitur", href: "#features" },
+  { label: "Misi", href: "#missions" },
+  { label: "Artikel", href: "#articles" },
+  { label: "Peringkat", href: "#leaderboard" },
+];
 </script>
 
 <template>
   <div
-    class="landing-root min-h-screen text-slate-900 transition-colors duration-200 bg-white dark:bg-slate-950 dark:text-slate-100"
-  >
+    class="landing-root min-h-screen text-slate-900 transition-colors duration-200 bg-white dark:bg-slate-950 dark:text-slate-100">
     <nav class="sticky top-0 z-20 border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
       <div class="flex items-center justify-between px-6 py-4 mx-auto max-w-7xl">
         <div class="flex items-center gap-3">
@@ -335,8 +355,7 @@ const { isDark, toggleDarkMode } = useDarkMode();
             href="https://drive.google.com/drive/folders/1jFhOWbdc7BVrS3xr8qWJn1KzOh6Z8_26?usp=sharing"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center px-6 py-3 text-sm font-semibold text-emerald-700 transition bg-white rounded-md hover:bg-emerald-50"
-          >
+            class="inline-flex items-center px-6 py-3 text-sm font-semibold text-emerald-700 transition bg-white rounded-md hover:bg-emerald-50">
             Coba Sekarang
           </a>
         </div>

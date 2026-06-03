@@ -1,146 +1,56 @@
 <script setup>
 import { ref } from "vue";
-import { RouterLink, RouterView, useRoute, useRouter } from "vue-router";
+import { RouterView } from "vue-router";
 import { useAuthStore } from "../stores/auth";
 import { useDarkMode } from "../composables/useDarkMode";
+import DashboardSidebar from "../components/layout/DashboardSidebar.vue";
 
-import logoIcon from "../assets/img/logo.png";
-import dashboardWhiteIcon from "../assets/img/dashboard_white.png";
-import artikelWhiteIcon from "../assets/img/artikel_white.png";
-import missionWhiteIcon from "../assets/img/mission_white.png";
-import quizWhiteIcon from "../assets/img/quiz_white.png";
-
-const route = useRoute();
-const router = useRouter();
 const authStore = useAuthStore();
 const { isDark, toggleDarkMode } = useDarkMode();
-
-const menuItems = [
-  {
-    name: "Dashboard",
-    path: "/",
-    icon: dashboardWhiteIcon,
-  },
-  {
-    name: "Buat Artikel",
-    path: "/articles/create",
-    icon: artikelWhiteIcon,
-  },
-  {
-    name: "Buat Misi",
-    path: "/missions/create",
-    icon: missionWhiteIcon,
-  },
-  {
-    name: "Buat Quiz",
-    path: "/quizzes/create",
-    icon: quizWhiteIcon,
-  },
-];
-
-function handleLogout() {
-  authStore.logout();
-  router.push("/login");
-}
-
-function isActive(path) {
-  if (path === "/") {
-    return route.path === "/";
-  }
-  return route.path.startsWith(path);
-}
+const sidebarOpen = ref(false);
 </script>
 
 <template>
   <div
     class="flex h-screen overflow-hidden transition-colors duration-200 bg-gray-50 dark:bg-gray-900"
   >
-    <aside
-      class="flex flex-col flex-shrink-0 w-56 text-white transition-colors duration-200 bg-sidebar dark:bg-gray-800"
-    >
-      <div class="flex items-center gap-2 p-4">
-        <div class="flex items-center justify-center w-10 h-10">
-          <img
-            :src="logoIcon"
-            alt="CarbonQuest Logo"
-            class="object-contain w-10 h-10"
-          />
-        </div>
-        <span class="text-xl font-bold"
-          >Carbon<span class="text-cyan-400">Quest</span></span
-        >
-      </div>
+    <DashboardSidebar
+      :items="[]"
+      :open="sidebarOpen"
+      @close="sidebarOpen = false"
+    />
 
-      <nav class="flex-1 mt-4 overflow-y-auto">
-        <RouterLink
-          v-for="item in menuItems"
-          :key="item.path"
-          :to="item.path"
-          :class="[
-            'flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition',
-            isActive(item.path)
-              ? 'bg-blue-600 text-white'
-              : 'text-gray-300 hover:bg-gray-700',
-          ]"
-        >
-          <img :src="item.icon" :alt="item.name" class="w-5 h-5" />
-          {{ item.name }}
-        </RouterLink>
-      </nav>
-
-      <div class="flex-shrink-0 p-4 space-y-2">
-        <RouterLink
-          to="/change-password"
-          class="flex items-center w-full gap-3 px-4 py-3 text-white transition bg-gray-700 rounded-lg dark:bg-gray-600 hover:bg-gray-600 dark:hover:bg-gray-500"
-        >
-          <svg
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
-            />
-          </svg>
-          Ganti Password
-        </RouterLink>
-        <button
-          @click="handleLogout"
-          class="flex items-center w-full gap-3 px-4 py-3 text-white transition bg-red-500 rounded-lg hover:bg-red-600"
-        >
-          <svg
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-            />
-          </svg>
-          Logout
-        </button>
-      </div>
-    </aside>
-
-    <main class="flex flex-col flex-1 overflow-hidden">
+    <main class="flex flex-col flex-1 overflow-hidden lg:ml-64">
       <header
         class="flex items-center justify-between flex-shrink-0 px-6 py-4 transition-colors duration-200 bg-white shadow-sm dark:bg-gray-800"
       >
-        <div>
-          <p class="text-sm text-gray-500 dark:text-gray-400">
-            Selamat datang,
-          </p>
-          <p class="font-semibold text-gray-900 dark:text-white">
-            {{ authStore.userName }}
-          </p>
+        <div class="flex items-center gap-4">
+          <button
+            @click="sidebarOpen = !sidebarOpen"
+            class="flex h-10 w-10 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 lg:hidden"
+          >
+            <svg
+              class="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+          <div>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              Selamat datang,
+            </p>
+            <p class="font-semibold text-gray-900 dark:text-white">
+              {{ authStore.userName }}
+            </p>
+          </div>
         </div>
 
         <button
