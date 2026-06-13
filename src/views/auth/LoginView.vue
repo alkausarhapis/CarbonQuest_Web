@@ -19,7 +19,7 @@ const showPassword = ref(false);
 const { errors, validate, clearField, clearErrors, touch, hasError } =
   useFormValidation();
 
-const serverError = ref("");
+const serverError = ref(authStore.error || "");
 
 function clearAllErrors() {
   clearErrors();
@@ -29,8 +29,6 @@ function clearAllErrors() {
 }
 
 async function handleLogin() {
-  serverError.value = "";
-
   const rules = {
     email: (v) => required(v, "Email") || emailRule(v),
     password: (v) => required(v, "Kata sandi"),
@@ -42,6 +40,7 @@ async function handleLogin() {
 
   const success = await authStore.login(form.value.email, form.value.password);
   if (success) {
+    serverError.value = "";
     router.push("/");
   } else if (authStore.error) {
     serverError.value = authStore.error;
@@ -153,7 +152,7 @@ async function handleLogin() {
             Masuk untuk mengakses dasbor Anda
           </p>
 
-          <form @submit.prevent="handleLogin" class="mt-8 space-y-5">
+          <form class="mt-8 space-y-5">
             <!-- Email -->
             <div>
               <label
@@ -164,10 +163,7 @@ async function handleLogin() {
               <input
                 v-model="form.email"
                 @blur="touch('email')"
-                @input="
-                  clearField('email');
-                  serverError = '';
-                "
+                @input="clearField('email')"
                 type="text"
                 placeholder="anda@email.com"
                 autocomplete="email"
@@ -199,10 +195,7 @@ async function handleLogin() {
                 <input
                   v-model="form.password"
                   @blur="touch('password')"
-                  @input="
-                    clearField('password');
-                    serverError = '';
-                  "
+                  @input="clearField('password')"
                   :type="showPassword ? 'text' : 'password'"
                   placeholder="Masukkan kata sandi"
                   autocomplete="current-password"
@@ -253,7 +246,8 @@ async function handleLogin() {
 
             <!-- Submit -->
             <button
-              type="submit"
+              type="button"
+              @click="handleLogin"
               :disabled="authStore.loading"
               class="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand-primary text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-brand-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
             >
