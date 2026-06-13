@@ -43,6 +43,7 @@ export const useAuthStore = defineStore("auth", () => {
       localStorage.setItem("token", authToken);
       localStorage.setItem("user", JSON.stringify(organization));
       localStorage.removeItem("loginError");
+      error.value = null;
 
       return true;
     } catch (err) {
@@ -78,8 +79,10 @@ export const useAuthStore = defineStore("auth", () => {
   function logout() {
     token.value = null;
     user.value = null;
+    error.value = null;
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("loginError");
   }
 
   async function changePassword(currentPassword, newPassword) {

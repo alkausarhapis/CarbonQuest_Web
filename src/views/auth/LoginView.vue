@@ -28,7 +28,9 @@ function clearAllErrors() {
   localStorage.removeItem("loginError");
 }
 
-async function handleLogin() {
+async function handleLogin(e) {
+  e.preventDefault();
+
   const rules = {
     email: (v) => required(v, "Email") || emailRule(v),
     password: (v) => required(v, "Kata sandi"),
@@ -152,7 +154,7 @@ async function handleLogin() {
             Masuk untuk mengakses dasbor Anda
           </p>
 
-          <form class="mt-8 space-y-5">
+          <form @submit="handleLogin" class="mt-8 space-y-5">
             <!-- Email -->
             <div>
               <label
