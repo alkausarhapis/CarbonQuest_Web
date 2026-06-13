@@ -16,7 +16,7 @@ const menuItems = [
   { label: "Artikel", href: "#articles" },
   { label: "Kuis", href: "#quizzes" },
   { label: "Peringkat", href: "#leaderboard" },
-  { label: "Statistik", href: "#stats" },
+  // { label: "Statistik", href: "#stats" },
 ];
 
 const navLinks = [

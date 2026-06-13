@@ -20,22 +20,22 @@ const props = defineProps({
       { label: "Peringkat", href: "#leaderboard" },
     ],
   },
-  resourceLinks: {
-    type: Array,
-    default: () => [
-      { label: "Kalkulator", href: "/calculator" },
-      { label: "Kuis", href: "/quizzes" },
-      { label: "Dasbor", href: "/dashboard" },
-    ],
-  },
-  socialLinks: {
-    type: Array,
-    default: () => [
-      { label: "LinkedIn", href: "#" },
-      { label: "Instagram", href: "#" },
-      { label: "YouTube", href: "#" },
-    ],
-  },
+  // resourceLinks: {
+  //   type: Array,
+  //   default: () => [
+  //     { label: "Kalkulator", href: "/calculator" },
+  //     { label: "Kuis", href: "/quizzes" },
+  //     { label: "Dasbor", href: "/dashboard" },
+  //   ],
+  // },
+  // socialLinks: {
+  //   type: Array,
+  //   default: () => [
+  //     { label: "LinkedIn", href: "#" },
+  //     { label: "Instagram", href: "#" },
+  //     { label: "YouTube", href: "#" },
+  //   ],
+  // },
   copyright: {
     type: String,
     default: "2026 CarbonQuest. Semua hak dilindungi.",
@@ -72,16 +72,16 @@ const props = defineProps({
         </ul>
       </div>
       <div>
-        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-white/50">
+        <!-- <p class="text-xs font-semibold uppercase tracking-[0.3em] text-white/50">
           Sumber Daya
-        </p>
-        <ul class="mt-4 space-y-2 text-sm text-white/75">
+        </p> -->
+        <!-- <ul class="mt-4 space-y-2 text-sm text-white/75">
           <li v-for="link in props.resourceLinks" :key="link.label">
             <a :href="link.href" class="transition hover:text-white">
               {{ link.label }}
             </a>
           </li>
-        </ul>
+        </ul> -->
         <div class="mt-6 flex items-center gap-4 text-sm text-white/65">
           <a
             v-for="link in props.socialLinks"
