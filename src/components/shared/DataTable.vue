@@ -15,6 +15,7 @@ const props = defineProps({
   createLink: { type: String, default: "" },
   createLabel: { type: String, default: "+ Baru" },
   searchPlaceholder: { type: String, default: "Cari..." },
+  scrollable: { type: Boolean, default: false },
 });
 
 const emit = defineEmits([
@@ -87,7 +88,10 @@ const skeletonRows = [1, 2, 3, 4, 5];
     </div>
 
     <!-- Table -->
-    <div class="overflow-x-auto">
+    <div
+      class="overflow-x-auto"
+      :class="scrollable ? 'max-h-[420px] overflow-y-auto' : ''"
+    >
       <table class="w-full">
         <thead>
           <tr class="border-b border-gray-200 dark:border-gray-700">
@@ -97,6 +101,7 @@ const skeletonRows = [1, 2, 3, 4, 5];
               :class="[
                 'px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 align-middle',
                 col.sortable ? 'cursor-pointer select-none hover:text-gray-700 dark:hover:text-gray-200' : '',
+                scrollable ? 'sticky top-0 bg-white dark:bg-gray-900 z-10' : '',
               ]"
               :style="col.width ? { width: col.width } : {}"
               @click="col.sortable ? toggleSort(col.key) : null"

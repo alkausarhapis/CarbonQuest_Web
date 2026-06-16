@@ -203,6 +203,7 @@ function cancelDelete() {
       :search="articleSearch"
       :sort-key="articleSortKey"
       :sort-order="articleSortOrder"
+      scrollable
       search-placeholder="Cari artikel..."
       empty-message="Tidak ada artikel"
       @update:search="articleSearch = $event"
@@ -236,6 +237,7 @@ function cancelDelete() {
       :search="missionSearch"
       :sort-key="missionSortKey"
       :sort-order="missionSortOrder"
+      scrollable
       search-placeholder="Cari misi..."
       empty-message="Tidak ada misi"
       @update:search="missionSearch = $event"
@@ -274,6 +276,7 @@ function cancelDelete() {
       :search="quizSearch"
       :sort-key="quizSortKey"
       :sort-order="quizSortOrder"
+      scrollable
       search-placeholder="Cari quiz..."
       empty-message="Tidak ada quiz"
       @update:search="quizSearch = $event"
